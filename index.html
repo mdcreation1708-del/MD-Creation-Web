@@ -168,7 +168,7 @@
         <i data-lucide="check-circle-2" class="w-16 h-16 text-emerald-400 mx-auto mb-4"></i>
         <h2 class="text-2xl font-bold text-white mb-2">Invoice Generated!</h2>
         <p class="text-slate-400 text-sm max-w-md mx-auto mb-6">
-          Your itemized layout PDF has been downloaded automatically.
+          Your itemized layout PDF has been downloaded automatically. We are redirecting you to WhatsApp to complete your order.
         </p>
         <button onclick="showSection('dashboard')" class="bg-slate-800 hover:bg-slate-700 text-white text-sm font-semibold px-6 py-2.5 rounded-xl transition">
           Return to Dashboard
@@ -183,15 +183,22 @@
       </button>
 
       <div class="mb-10">
-        <h2 class="text-3xl font-extrabold text-white mb-2">Electronics Store & Inventory</h2>
+        <div class="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 mb-2">
+          <h2 class="text-3xl font-extrabold text-white">Electronics Store & Inventory</h2>
+          
+          <!-- COMING SOON TAG -->
+          <span class="inline-flex w-fit items-center gap-1.5 px-3 py-1 bg-amber-500/10 text-amber-400 border border-amber-500/20 rounded-full text-xs font-bold uppercase tracking-wider shadow-lg shadow-amber-500/10">
+            <i data-lucide="clock" class="w-3.5 h-3.5"></i> Coming Soon
+          </span>
+          
+        </div>
         <p class="text-slate-400">Explore technical specifications, pinout configurations, and purchase hardware directly.</p>
       </div>
 
-      <!-- Store Grid Container (Dynamically injected by JavaScript) -->
-      <div id="store-grid-container"></div>
+      <!-- Store Grid Container (Dimmed and Click-Disabled) -->
+      <div id="store-grid-container" class="opacity-60 pointer-events-none select-none grayscale-[30%]"></div>
       
     </section>
-
   </main>
 
   <!-- AUTH MODAL -->
@@ -237,7 +244,6 @@
       "21. Advanced Modules": ["ESP32-CAM", "Voice Recognition", "Load Cell + HX711", "pH Sensor", "EC Sensor", "TDS Sensor", "Turbidity Sensor", "Vibration Sensor", "Flex Sensor", "Strain Gauge", "INA219", "ACS712", "Voltage Sensor Module"]
     };
 
-    // Category Icons Mapping
     const categoryIcons = {
       "1. Microcontrollers & Development Boards": "cpu",
       "2. Sensors": "radar",
@@ -262,7 +268,7 @@
       "21. Advanced Modules": "layers"
     };
 
-    // INITIALIZE DROPDOWN LIST (Project Order Portal)
+    // INITIALIZE DROPDOWN LIST 
     function initDropdown() {
       const listContainer = document.getElementById('components-list');
       let html = '';
@@ -289,7 +295,7 @@
       listContainer.innerHTML = html;
     }
 
-    // INITIALIZE FULL STOREFRONT (Electronics Store & Info Hub)
+    // INITIALIZE FULL STOREFRONT
     function initStore() {
       const storeContainer = document.getElementById('store-grid-container');
       let html = '';
@@ -415,7 +421,7 @@
       }
     }
 
-    // GENERATE EXACT INVOICE LAYOUT
+    // GENERATE INVOICE & SEND TO WHATSAPP
     function handleOrderSubmit(e) {
       e.preventDefault();
       const title = document.getElementById('proj-title').value;
@@ -423,43 +429,28 @@
       const { jsPDF } = window.jspdf;
       const doc = new jsPDF();
 
-      doc.setFillColor(0, 0, 0);
-      doc.rect(0, 15, 95, 18, "F"); 
-      doc.setFont("helvetica", "bold");
-      doc.setFontSize(30);
-      doc.setTextColor(255, 255, 255);
-      doc.text("Invoice", 30, 28);
+      doc.setFillColor(0, 0, 0); doc.rect(0, 15, 95, 18, "F"); 
+      doc.setFont("helvetica", "bold"); doc.setFontSize(30);
+      doc.setTextColor(255, 255, 255); doc.text("Invoice", 30, 28);
 
-      doc.setTextColor(135, 156, 137); 
-      doc.setFontSize(26);
+      doc.setTextColor(135, 156, 137); doc.setFontSize(26);
       doc.text("MD CREATIONS", 115, 25);
-      doc.setTextColor(0, 0, 0);
-      doc.setFont("helvetica", "normal");
-      doc.setFontSize(10);
-      doc.text("& ARDUINO PROJECTS", 123, 31);
+      doc.setTextColor(0, 0, 0); doc.setFont("helvetica", "normal");
+      doc.setFontSize(10); doc.text("& ARDUINO PROJECTS", 123, 31);
 
-      doc.setFont("helvetica", "bold");
-      doc.setFontSize(11);
+      doc.setFont("helvetica", "bold"); doc.setFontSize(11);
       doc.text(`TO: ${title.toUpperCase()}`, 20, 55);
       
       const today = new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
       doc.text(`Date: ${today}`, 130, 55);
 
-      doc.setFillColor(0, 0, 0);
-      doc.rect(20, 70, 170, 10, "F");
-      doc.setTextColor(255, 255, 255);
-      doc.setFont("helvetica", "normal");
-      doc.setFontSize(11);
-      doc.text("DESCRIPTION", 35, 76.5);
-      doc.text("PRICE", 100, 76.5);
-      doc.text("QTY.", 145, 76.5);
-      doc.text("AMOUNT", 168, 76.5);
+      doc.setFillColor(0, 0, 0); doc.rect(20, 70, 170, 10, "F");
+      doc.setTextColor(255, 255, 255); doc.setFont("helvetica", "normal"); doc.setFontSize(11);
+      doc.text("DESCRIPTION", 35, 76.5); doc.text("PRICE", 100, 76.5);
+      doc.text("QTY.", 145, 76.5); doc.text("AMOUNT", 168, 76.5);
 
       doc.setTextColor(0, 0, 0);
-      const startY = 70;
-      let y = 92;
-      let count = 1;
-      let compTotal = 0;
+      const startY = 70; let y = 92; let count = 1; let compTotal = 0;
 
       document.querySelectorAll('.comp-check:checked').forEach((cb) => {
         let rawName = cb.getAttribute('data-name');
@@ -515,7 +506,27 @@
       doc.setTextColor(255, 255, 255); doc.setFont("helvetica", "bold"); doc.setFontSize(18); doc.text("MD", 92, t3 + 28);
       doc.setFontSize(9); doc.text("CREATIONS", 87, t3 + 34);
 
+      // --- WHATSAPP INTEGRATION ---
+      // IMPORTANT: Change this to your actual WhatsApp Business number (No '+' sign)
+      const yourWhatsAppNumber = "919000000000"; 
+      const notes = document.getElementById('proj-notes').value || "No additional notes.";
+      
+      const waMessage = `*New Order: ${title.toUpperCase()}*%0A`
+        + `Components: ₹${compTotal}%0A`
+        + `Making Charges (35%): ₹${makingCharge}%0A`
+        + `*Grand Total: ₹${grandTotalVal}*%0A%0A`
+        + `*Client Notes:* ${notes}%0A%0A`
+        + `_I have downloaded the PDF invoice and am ready to proceed._`;
+
+      const waLink = `https://wa.me/${yourWhatsAppNumber}?text=${waMessage}`;
+      
+      // Open WhatsApp in a new tab
+      window.open(waLink, '_blank');
+
+      // Trigger the PDF download
       doc.save(`Invoice_${title.replace(/\s+/g, '_')}.pdf`);
+      
+      // Update UI
       document.getElementById('form-container').classList.add('hidden');
       document.getElementById('success-container').classList.remove('hidden');
     }
