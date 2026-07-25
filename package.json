@@ -1,0 +1,12 @@
+{
+  "name": "md-creations-portal",
+  "version": "1.0.0",
+  "description": "Client portal and storefront for MD Creations",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}
