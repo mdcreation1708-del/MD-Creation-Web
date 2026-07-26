@@ -6,7 +6,6 @@
   <title>MD CREATIONS — Engineering & Web Solutions</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
-  <!-- Optional: jsPDF for Invoice Generation -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
   <style>
@@ -20,10 +19,10 @@
   <header class="border-b border-slate-800 bg-slate-900/50 backdrop-blur sticky top-0 z-40">
     <div class="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
       <div class="flex items-center gap-2">
-        <div class="w-8 h-8 bg-white rounded flex items-center justify-center text-slate-900 font-black text-sm">MD</div>
+        <!-- Replace 'logo.png' with your actual logo file name if it is different -->
+        <img src="logo.png" alt="MD Creations" class="w-8 h-8 rounded-full bg-white object-cover" onerror="this.outerHTML='<div class=\\'w-8 h-8 bg-white rounded flex items-center justify-center text-slate-900 font-black text-sm\\'>MD</div>'">
         <h1 class="text-xl font-bold tracking-wider">MD CREATIONS</h1>
       </div>
-      <!-- Dynamic Nav Area (Injects Login OR Avatar/Logout) -->
       <div id="navArea"></div>
     </div>
   </header>
@@ -39,18 +38,19 @@
     <p class="text-slate-400 text-center max-w-xl mb-10 text-sm md:text-base leading-relaxed">
       Order custom IoT systems, embedded hardware prototypes, or web portals with automated component-based cost estimations.
     </p>
-    <button onclick="showAuthModal()" id="getStartedBtn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-xl transition flex items-center gap-2 shadow-lg shadow-blue-500/20">
+    
+    <button onclick="handleGetStarted()" id="getStartedBtn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-xl transition flex items-center gap-2 shadow-lg shadow-blue-500/20">
       Get Started Now <i data-lucide="arrow-right" class="w-4 h-4"></i>
     </button>
 
-    <!-- Order Form Section (Hidden until logged in) -->
+    <!-- Order Form Section (Hidden until Get Started is clicked by a logged-in user) -->
     <div id="orderSection" class="hidden w-full max-w-3xl mt-16 bg-slate-800/50 border border-slate-700 p-6 md:p-8 rounded-2xl shadow-xl">
       <h3 class="text-xl font-bold mb-6">Build Your Project</h3>
       
       <div class="space-y-5">
         <div>
           <label class="block text-xs font-bold text-slate-400 mb-2 uppercase">Project Title</label>
-          <input type="text" id="projectTitle" placeholder="e.g., Auto Rover" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500 transition">
+          <input type="text" id="projectTitle" placeholder="e.g., WiFi Rover 3.0" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500 transition">
         </div>
         
         <div>
@@ -60,7 +60,7 @@
 
         <div>
           <label class="block text-xs font-bold text-slate-400 mb-2 uppercase">Additional Settings or Changes</label>
-          <textarea id="instructions" rows="3" placeholder="Enter any specific wiring instructions, custom features..." class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500 transition"></textarea>
+          <textarea id="instructions" rows="3" placeholder="Enter any specific wiring instructions, custom features, or SCADA requirements..." class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500 transition"></textarea>
         </div>
 
         <!-- Price Breakdown & Submit -->
@@ -79,14 +79,15 @@
     </div>
   </main>
 
-  <!-- Auth Modal (Hidden by Default) -->
+  <!-- Auth Modal -->
   <div id="authModal" class="fixed inset-0 z-50 hidden bg-black/80 backdrop-blur-sm flex items-center justify-center px-4">
     <div class="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-md p-6 relative shadow-2xl">
       <button onclick="closeAuthModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white transition">
         <i data-lucide="x" class="w-5 h-5"></i>
       </button>
       <div class="flex flex-col items-center py-6">
-        <div class="w-12 h-12 bg-white rounded-lg flex items-center justify-center text-slate-900 font-black text-xl mb-4">MD</div>
+        <!-- Replace 'logo.png' with your actual logo file name if it is different -->
+        <img src="logo.png" alt="MD Creations" class="w-16 h-16 rounded-lg mb-4 object-cover" onerror="this.outerHTML='<div class=\\'w-12 h-12 bg-white rounded-lg flex items-center justify-center text-slate-900 font-black text-xl mb-4\\'>MD</div>'">
         <h3 class="text-xl font-bold text-center mb-2">Welcome to MD CREATIONS</h3>
         <p class="text-slate-400 text-sm text-center mb-8">Sign in to save your custom projects and build orders.</p>
         
@@ -99,10 +100,8 @@
   </div>
 
   <script>
-    // Initialize Lucide Icons
     lucide.createIcons();
 
-    // Modal Control Functions (Exposed to Window for HTML onclick attributes)
     window.showAuthModal = function() {
       document.getElementById('authModal').classList.remove('hidden');
     }
@@ -110,11 +109,11 @@
       document.getElementById('authModal').classList.add('hidden');
     }
 
-    // Cost Calculation Logic
+    // Cost Calculation
     window.calculateTotal = function() {
       const costInput = document.getElementById('componentCost').value;
       const compCost = parseFloat(costInput) || 0;
-      const makingCharge = compCost * 0.35; // 35% Making Charge
+      const makingCharge = compCost * 0.35;
       const total = compCost + makingCharge;
 
       document.getElementById('displayCompCost').innerText = `₹${compCost.toFixed(0)}`;
@@ -129,16 +128,16 @@
     import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
     import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-    // 🔴 IMPORTANT: REPLACE THIS OBJECT WITH YOUR FIREBASE PROJECT CONFIG
-const firebaseConfig = {
-  apiKey: "AIzaSyACdSoGxY5g0VRZvGtvysYMLwjGUyUz06s",
-  authDomain: "md-creation-c9871.firebaseapp.com",
-  projectId: "md-creation-c9871",
-  storageBucket: "md-creation-c9871.firebasestorage.app",
-  messagingSenderId: "650714309909",
-  appId: "1:650714309909:web:b19a86843c7442d8b2b51c"
-};
-    // Initialize Firebase
+    // Your actual Firebase Config is initialized here
+    const firebaseConfig = {
+      apiKey: "AIzaSyACdSoGxY5g0VRZvGtvysYMLwjGUyUz06s",
+      authDomain: "md-creation-c9871.firebaseapp.com",
+      projectId: "md-creation-c9871",
+      storageBucket: "md-creation-c9871.firebasestorage.app",
+      messagingSenderId: "650714309909",
+      appId: "1:650714309909:web:b19a86843c7442d8b2b51c"
+    };
+
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getFirestore(app);
@@ -148,37 +147,39 @@ const firebaseConfig = {
     const authModal = document.getElementById('authModal');
     const googleSignInBtn = document.getElementById('googleSignInBtn');
     const orderSection = document.getElementById('orderSection');
-    const getStartedBtn = document.getElementById('getStartedBtn');
     const submitOrderBtn = document.getElementById('submitOrderBtn');
 
-    // Make logout function global so HTML button can trigger it
+    window.handleGetStarted = function() {
+      if (auth.currentUser) {
+        orderSection.classList.remove('hidden');
+        orderSection.scrollIntoView({ behavior: 'smooth' });
+      } else {
+        showAuthModal();
+      }
+    };
+
     window.executeLogout = () => {
       signOut(auth).then(() => {
+        orderSection.classList.add('hidden');
         console.log("Logged out successfully");
       }).catch((error) => {
         console.error("Logout Error", error);
       });
     };
 
-    // Auth State Observer - THIS FIXES THE RACE CONDITION
     onAuthStateChanged(auth, (user) => {
       if (user) {
-        // 1. Force Modal Closed if it was open
         authModal.classList.add('hidden');
         
-        // 2. Hide Hero Button, Show Order Form
-        getStartedBtn.classList.add('hidden');
-        orderSection.classList.remove('hidden');
-
-        // 3. Render Logged-In Navbar with Admin check & Logout Button
-        const adminBtnHTML = (user.email === 'YOUR_ADMIN_EMAIL@gmail.com') 
-          ? `<button onclick="window.location.href='/admin'" class="text-xs text-blue-400 border border-blue-500/30 px-3 py-1.5 rounded-lg hover:bg-blue-500/10">Admin</button>` 
+        // Admin permissions checking against your emails
+        const adminBtnHTML = (user.email === 'deshmukhmalhar017@gmail.com' || user.email === 'mdcreation010@gmail.com') 
+          ? `<button onclick="window.location.href='/admin'" class="text-xs text-blue-400 border border-blue-500/30 px-3 py-1.5 rounded-lg hover:bg-blue-500/10 transition">Admin</button>` 
           : '';
 
         navArea.innerHTML = `
           <div class="flex items-center gap-3">
             ${adminBtnHTML}
-            <button onclick="console.log('Dashboard clicked')" class="bg-slate-800 hover:bg-slate-700 text-xs text-white font-bold px-4 py-2 rounded-xl transition border border-slate-700 hidden sm:block">Dashboard</button>
+            <button onclick="handleGetStarted()" class="bg-slate-800 hover:bg-slate-700 text-xs text-white font-bold px-4 py-2 rounded-xl transition border border-slate-700 hidden sm:block">Dashboard</button>
             <img src="${user.photoURL}" alt="Profile" class="w-9 h-9 rounded-full border-2 border-slate-800">
             <button onclick="executeLogout()" class="bg-red-500/10 hover:bg-red-500/20 text-red-500 text-xs font-bold px-3 py-2 rounded-xl transition border border-red-500/20 flex items-center gap-1.5 shadow-lg">
               <i data-lucide="log-out" class="w-3.5 h-3.5"></i> Logout
@@ -186,26 +187,23 @@ const firebaseConfig = {
           </div>
         `;
       } else {
-        // User is logged out
-        getStartedBtn.classList.remove('hidden');
         orderSection.classList.add('hidden');
         navArea.innerHTML = `<button onclick="showAuthModal()" class="text-sm font-semibold border border-slate-600 hover:border-white px-4 py-2 rounded-xl transition">Sign In / Register</button>`;
       }
+      lucide.createIcons();
     });
 
-    // Google Sign-In Trigger (Using Popup instead of Redirect)
     googleSignInBtn.addEventListener('click', () => {
       signInWithPopup(auth, provider)
         .then((result) => {
-          authModal.classList.add('hidden'); // Close modal immediately on success
+          authModal.classList.add('hidden');
         })
         .catch((error) => {
           console.error("Authentication Error:", error);
-          alert("Login failed. Please check console for details.");
+          alert("Login failed. Check console for details.");
         });
     });
 
-    // Handle Order Submission to Firestore Database
     submitOrderBtn.addEventListener('click', async () => {
       if (!auth.currentUser) return alert("Please log in first!");
 
@@ -217,13 +215,11 @@ const firebaseConfig = {
         return alert("Please enter a project title and component cost.");
       }
 
-      // Change button state to show it is processing
       const originalBtnText = submitOrderBtn.innerHTML;
       submitOrderBtn.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> Saving to Database...`;
       submitOrderBtn.disabled = true;
 
       try {
-        // Save to Firestore
         await addDoc(collection(db, "orders"), {
           userId: auth.currentUser.uid,
           userName: auth.currentUser.displayName,
@@ -239,11 +235,10 @@ const firebaseConfig = {
 
         alert("Order successfully saved to database!");
         
-        // Optional: Redirect to WhatsApp
+        // Remember to change 91XXXXXXXXXX to your real WhatsApp number!
         const waMessage = `Hello MD Creations!%0A%0A*New Order:* ${projectTitle}%0A*Component Cost:* ₹${compCost}%0A*Total Est:* ₹${compCost + (compCost * 0.35)}`;
         window.open(`https://wa.me/91XXXXXXXXXX?text=${waMessage}`, '_blank');
         
-        // Reset form
         document.getElementById('projectTitle').value = '';
         document.getElementById('componentCost').value = '';
         document.getElementById('instructions').value = '';
