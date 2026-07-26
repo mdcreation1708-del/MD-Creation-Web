@@ -18,7 +18,6 @@
     @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
     body { font-family: 'Plus Jakarta Sans', sans-serif; }
     
-    /* Custom Scrollbar */
     .custom-scrollbar::-webkit-scrollbar { width: 6px; }
     .custom-scrollbar::-webkit-scrollbar-track { background: #0f172a; border-radius: 8px; }
     .custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; border-radius: 8px; }
@@ -30,12 +29,12 @@
   <nav class="border-b border-slate-900 bg-slate-950/80 backdrop-blur sticky top-0 z-30">
     <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
       <div class="flex items-center gap-3 cursor-pointer" onclick="showSection('landing')">
-        <!-- ACTUAL LOGO IMAGE ADDED HERE -->
         <img src="favicon.ico?v=2" alt="MD Creations Logo" class="w-10 h-10 rounded-xl shadow-lg shadow-blue-500/20 object-cover">
         <span class="font-extrabold text-xl tracking-tight text-white">MD CREATIONS</span>
       </div>
       
-      <div id="nav-user-area">
+      <div id="nav-user-area" class="flex items-center gap-3">
+        <!-- Default State -->
         <button onclick="openAuthModal()" class="bg-blue-600 hover:bg-blue-500 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition flex items-center gap-2 shadow-lg shadow-blue-600/20">
           <span>Sign In / Register</span>
           <i data-lucide="arrow-right" class="w-4 h-4"></i>
@@ -118,7 +117,6 @@
             <input id="proj-title" type="text" required placeholder="e.g., Autonomous Rover" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-blue-500" />
           </div>
 
-          <!-- SEARCHABLE DROPDOWN -->
           <div class="relative">
             <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">Select Hardware Components</label>
             <button type="button" id="dropdown-btn" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm text-slate-400 focus:outline-none focus:border-blue-500 text-left flex justify-between items-center transition hover:border-slate-700">
@@ -147,7 +145,6 @@
             <textarea id="proj-notes" rows="3" placeholder="Enter any specific wiring instructions, custom features, or additional modifications needed..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-blue-500 custom-scrollbar"></textarea>
           </div>
 
-          <!-- BREAKDOWN & QUOTATION CARD -->
           <div class="p-5 bg-blue-950/40 border border-blue-500/30 rounded-xl flex flex-col sm:flex-row justify-between items-center gap-4 mt-6">
             <div class="space-y-1">
               <span class="text-[10px] uppercase font-bold text-blue-400 tracking-wider">Price Breakdown</span>
@@ -159,18 +156,17 @@
             </div>
             <button type="submit" class="w-full sm:w-auto bg-blue-600 hover:bg-blue-500 text-white font-bold px-6 py-3.5 rounded-xl transition shadow-lg shadow-blue-600/30 flex items-center justify-center gap-2">
               <i data-lucide="file-down" class="w-4 h-4"></i>
-              <span>Generate Exact Invoice</span>
+              <span id="btn-submit-text">Generate Exact Invoice</span>
             </button>
           </div>
         </form>
       </div>
 
-      <!-- SUCCESS CONFIRMATION -->
       <div id="success-container" class="hidden bg-slate-900 border border-slate-800 rounded-2xl p-8 text-center shadow-2xl">
         <i data-lucide="check-circle-2" class="w-16 h-16 text-emerald-400 mx-auto mb-4"></i>
         <h2 class="text-2xl font-bold text-white mb-2">Invoice Generated!</h2>
         <p class="text-slate-400 text-sm max-w-md mx-auto mb-6">
-          Your itemized layout PDF has been downloaded automatically. We are redirecting you to WhatsApp to complete your order.
+          Your itemized layout PDF has been downloaded. Your order has been saved and you are being redirected to WhatsApp.
         </p>
         <button onclick="showSection('dashboard')" class="bg-slate-800 hover:bg-slate-700 text-white text-sm font-semibold px-6 py-2.5 rounded-xl transition">
           Return to Dashboard
@@ -178,7 +174,7 @@
       </div>
     </section>
 
-    <!-- PAGE 4: ELECTRONICS STORE & INFO HUB -->
+    <!-- PAGE 4: ELECTRONICS STORE -->
     <section id="page-store" class="hidden max-w-6xl mx-auto px-6 py-8">
       <button onclick="showSection('dashboard')" class="inline-flex items-center gap-2 text-slate-400 hover:text-white text-sm font-semibold mb-6">
         <i data-lucide="arrow-left" class="w-4 h-4"></i> Back to Hub
@@ -187,20 +183,64 @@
       <div class="mb-10">
         <div class="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 mb-2">
           <h2 class="text-3xl font-extrabold text-white">Electronics Store & Inventory</h2>
-          
-          <!-- COMING SOON TAG -->
           <span class="inline-flex w-fit items-center gap-1.5 px-3 py-1 bg-amber-500/10 text-amber-400 border border-amber-500/20 rounded-full text-xs font-bold uppercase tracking-wider shadow-lg shadow-amber-500/10">
             <i data-lucide="clock" class="w-3.5 h-3.5"></i> Coming Soon
           </span>
-          
         </div>
         <p class="text-slate-400">Explore technical specifications, pinout configurations, and purchase hardware directly.</p>
       </div>
 
-      <!-- Store Grid Container (Dimmed and Click-Disabled) -->
       <div id="store-grid-container" class="opacity-60 pointer-events-none select-none grayscale-[30%]"></div>
-      
     </section>
+
+    <!-- PAGE 5: ADMIN DASHBOARD (HIDDEN) -->
+    <section id="page-admin" class="hidden max-w-6xl mx-auto px-6 py-8">
+      <div class="mb-8">
+        <h2 class="text-3xl font-extrabold text-white mb-2">Owner Dashboard</h2>
+        <p class="text-emerald-400 text-sm font-semibold">Authorized Access Only.</p>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <!-- Order Database Table -->
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl">
+          <div class="flex items-center gap-3 mb-6 border-b border-slate-800 pb-4">
+            <div class="bg-blue-600/20 p-2 rounded-lg text-blue-400"><i data-lucide="list-ordered" class="w-5 h-5"></i></div>
+            <h3 class="text-xl font-bold text-white">Recent Orders</h3>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-sm text-slate-400">
+              <thead class="text-xs uppercase text-slate-500 border-b border-slate-800 bg-slate-950/50">
+                <tr><th class="px-4 py-3">Client Name</th><th class="px-4 py-3">Project Title</th><th class="px-4 py-3">Total (₹)</th></tr>
+              </thead>
+              <tbody id="admin-orders-table">
+                <!-- Javascript will inject rows here -->
+                <tr><td colspan="3" class="text-center py-4 text-slate-600">Loading orders...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- User Database Table -->
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl">
+          <div class="flex items-center gap-3 mb-6 border-b border-slate-800 pb-4">
+            <div class="bg-amber-500/20 p-2 rounded-lg text-amber-400"><i data-lucide="users" class="w-5 h-5"></i></div>
+            <h3 class="text-xl font-bold text-white">Registered Users</h3>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-sm text-slate-400">
+              <thead class="text-xs uppercase text-slate-500 border-b border-slate-800 bg-slate-950/50">
+                <tr><th class="px-4 py-3">Name</th><th class="px-4 py-3">Email</th></tr>
+              </thead>
+              <tbody id="admin-users-table">
+                <!-- Javascript will inject rows here -->
+                <tr><td colspan="2" class="text-center py-4 text-slate-600">Loading users...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
   </main>
 
   <!-- AUTH MODAL -->
@@ -210,83 +250,175 @@
         <i data-lucide="x" class="w-5 h-5"></i>
       </button>
       <div class="text-center mb-6">
-        <!-- ACTUAL LOGO IMAGE ADDED HERE FOR THE MODAL -->
         <img src="favicon.ico?v=2" alt="MD Creations Logo" class="w-12 h-12 rounded-xl mx-auto mb-3 shadow-lg shadow-blue-500/20 object-cover">
         <h2 class="text-2xl font-bold text-white">Welcome to MD CREATIONS</h2>
+        <p class="text-slate-400 text-sm mt-2">Sign in to save your custom projects and build orders.</p>
       </div>
-      <button onclick="simulateLogin('Google User')" class="w-full bg-slate-800 hover:bg-slate-700 border border-slate-700 text-white font-semibold py-3 px-4 rounded-xl transition flex items-center justify-center gap-3 mb-4">
+      <button onclick="executeGoogleLogin()" class="w-full bg-slate-800 hover:bg-slate-700 border border-slate-700 text-white font-semibold py-3 px-4 rounded-xl transition flex items-center justify-center gap-3 mb-2 shadow-lg">
+        <svg class="w-5 h-5" viewBox="0 0 24 24"><path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
         <span>Continue with Google</span>
       </button>
     </div>
   </div>
 
-  <!-- SCRIPT LOGIC -->
-  <script>
-    // FULL COMPONENT DATASET
+  <!-- FIREBASE & MAIN LOGIC MODULE -->
+  <script type="module">
+    // 1. IMPORT FIREBASE (v10 Modular SDK)
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import { getFirestore, doc, setDoc, collection, addDoc, getDocs, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+    // 2. YOUR FIREBASE CONFIGURATION (From Screenshot)
+    const firebaseConfig = {
+      apiKey: "AIzaSyACdSoGxY5g0VRZvGtvysYMLwjGUyUz06s",
+      authDomain: "md-creation-c9871.firebaseapp.com",
+      projectId: "md-creation-c9871",
+      storageBucket: "md-creation-c9871.firebasestorage.app",
+      messagingSenderId: "650714309909",
+      appId: "1:650714309909:web:b19a86843c7442d8b2b51c"
+    };
+
+    // 3. INITIALIZE FIREBASE
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    const provider = new GoogleAuthProvider();
+
+    // ----------------------------------------------------------------------
+    // CHANGE THIS: Add your actual Google Email here to unlock the Dashboard
+    const ADMIN_EMAIL = "YOUR_EMAIL@gmail.com"; 
+    // ----------------------------------------------------------------------
+
+    // GLOBALS FOR UI
+    let currentUser = null;
+
+    // FIREBASE AUTHENTICATION LOGIC
+    window.executeGoogleLogin = async () => {
+      try {
+        const result = await signInWithPopup(auth, provider);
+        const user = result.user;
+        
+        // Save user to Firestore 'users' collection
+        await setDoc(doc(db, "users", user.uid), {
+          name: user.displayName,
+          email: user.email,
+          lastLogin: serverTimestamp()
+        }, { merge: true });
+
+        closeAuthModal();
+      } catch (error) {
+        console.error("Login Failed", error);
+        alert("Login failed: " + error.message);
+      }
+    };
+
+    window.executeLogout = async () => {
+      await signOut(auth);
+      showSection('landing');
+    };
+
+    // LISTEN FOR LOGIN STATE CHANGES
+    onAuthStateChanged(auth, (user) => {
+      const navArea = document.getElementById('nav-user-area');
+      if (user) {
+        currentUser = user;
+        let adminBtnHTML = '';
+        
+        // Check if the logged-in user is the Admin
+        if (user.email === ADMIN_EMAIL) {
+          adminBtnHTML = `<button onclick="loadAdminData()" class="bg-amber-600 hover:bg-amber-500 text-xs text-white font-bold px-4 py-2 rounded-xl shadow-lg flex items-center gap-1"><i data-lucide="shield-check" class="w-3 h-3"></i> Admin Panel</button>`;
+        }
+
+        navArea.innerHTML = `
+          <div class="flex items-center gap-3">
+            ${adminBtnHTML}
+            <button onclick="showSection('dashboard')" class="bg-slate-800 hover:bg-slate-700 text-xs text-white font-bold px-4 py-2 rounded-xl transition border border-slate-700">Dashboard</button>
+            <img src="${user.photoURL}" alt="Profile" class="w-9 h-9 rounded-full border-2 border-slate-800 cursor-pointer hover:border-blue-500 transition" onclick="executeLogout()" title="Click to Logout">
+          </div>
+        `;
+        lucide.createIcons();
+      } else {
+        currentUser = null;
+        navArea.innerHTML = `
+          <button onclick="openAuthModal()" class="bg-blue-600 hover:bg-blue-500 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition flex items-center gap-2 shadow-lg shadow-blue-600/20">
+            <span>Sign In / Register</span>
+            <i data-lucide="arrow-right" class="w-4 h-4"></i>
+          </button>
+        `;
+      }
+    });
+
+    // ADMIN DASHBOARD DATA FETCHER
+    window.loadAdminData = async () => {
+      showSection('admin');
+      
+      // Fetch Users
+      try {
+        const usersSnap = await getDocs(collection(db, "users"));
+        let usersHTML = "";
+        usersSnap.forEach((doc) => {
+          const data = doc.data();
+          usersHTML += `<tr class="border-b border-slate-800/50 hover:bg-slate-800/20 transition"><td class="px-4 py-3 font-semibold text-white">${data.name || 'N/A'}</td><td class="px-4 py-3">${data.email || 'N/A'}</td></tr>`;
+        });
+        document.getElementById('admin-users-table').innerHTML = usersHTML || `<tr><td colspan="2" class="text-center py-4">No users found.</td></tr>`;
+      } catch (e) { document.getElementById('admin-users-table').innerHTML = `<tr><td colspan="2" class="text-red-400">Error loading users. (Check Firestore Security Rules)</td></tr>`; }
+
+      // Fetch Orders
+      try {
+        const q = query(collection(db, "orders"), orderBy("timestamp", "desc"));
+        const ordersSnap = await getDocs(q);
+        let ordersHTML = "";
+        ordersSnap.forEach((doc) => {
+          const data = doc.data();
+          ordersHTML += `<tr class="border-b border-slate-800/50 hover:bg-slate-800/20 transition"><td class="px-4 py-3 text-white">${data.clientName}</td><td class="px-4 py-3 text-blue-400 font-semibold">${data.projectTitle}</td><td class="px-4 py-3 text-emerald-400">₹${data.grandTotal}</td></tr>`;
+        });
+        document.getElementById('admin-orders-table').innerHTML = ordersHTML || `<tr><td colspan="3" class="text-center py-4">No orders found.</td></tr>`;
+      } catch (e) { document.getElementById('admin-orders-table').innerHTML = `<tr><td colspan="3" class="text-red-400">Error loading orders. (Check Firestore Security Rules)</td></tr>`; }
+    };
+
+    // UI CONTROL FUNCTIONS
+    window.openAuthModal = () => document.getElementById('auth-modal').classList.remove('hidden');
+    window.closeAuthModal = () => document.getElementById('auth-modal').classList.add('hidden');
+    window.showSection = (sectionId) => {
+      ['landing', 'dashboard', 'order-form', 'store', 'admin'].forEach(id => {
+        document.getElementById(`page-${id}`).classList.add('hidden');
+      });
+      document.getElementById(`page-${sectionId}`).classList.remove('hidden');
+      if (sectionId === 'order-form') {
+        document.getElementById('form-container').classList.remove('hidden');
+        document.getElementById('success-container').classList.add('hidden');
+      }
+    };
+
+    // DATA FOR DROPDOWN AND STORE
     const componentData = {
-      "1. Microcontrollers & Development Boards": ["Arduino Uno", "Arduino Nano", "Arduino Mega 2560", "Arduino Leonardo", "Arduino Pro Mini", "ESP32 DevKit V1", "ESP8266 NodeMCU", "ESP-01", "Raspberry Pi Pico", "STM32 Blue Pill", "Teensy"],
-      "2. Sensors": ["HC-SR04 Ultrasonic", "VL53L0X", "DHT11", "DHT22", "DS18B20", "LM35", "Thermistor", "Soil Moisture", "MQ-2", "MQ-3", "MQ-4", "MQ-5", "MQ-6", "MQ-7", "MQ-8", "MQ-9", "MQ-135", "PIR Motion", "RCWL-0516 Radar", "ADXL345", "MPU6050", "LDR", "BH1750", "TSL2561", "Rain Sensor", "Water Level", "Water Flow", "Leak Sensor", "BMP180", "BMP280", "BME280", "Hall Effect", "Reed Switch", "Flame Sensor", "Smoke Sensor", "TTP223", "Fingerprint Sensor", "MAX30100", "MAX30102", "Pulse Sensor", "ECG Sensor", "NEO-6M GPS", "TCS3200 Color Sensor", "OV2640 Camera"],
-      "3. Communication Modules": ["HC-05", "HC-06", "HM-10 BLE", "ESP8266 Wi-Fi", "ESP32 Wi-Fi/Bluetooth", "NRF24L01", "LoRa SX1278", "XBee ZigBee", "SIM800L", "SIM900", "SIM7600", "RC522 RFID", "NFC Module", "Ethernet Shield", "CAN Bus", "RS485"],
-      "4. Displays": ["16x2 LCD", "20x4 LCD", "0.96 OLED", "1.3 OLED", "TFT LCD", "Nextion Display", "7 Segment", "8x8 LED Matrix"],
-      "5. Motors & Actuators": ["TT DC Gear Motor", "High Torque DC Motor", "SG90", "MG90S", "MG996R", "28BYJ-48", "NEMA17", "NEMA23", "Linear Actuator", "Solenoid Lock", "Solenoid Valve", "Mini Water Pump", "Peristaltic Pump", "Air Pump"],
-      "6. Motor Drivers": ["L293D", "L298N", "TB6612FNG", "BTS7960", "A4988", "DRV8825", "ULN2003"],
-      "7. Relays": ["1-Channel", "2-Channel", "4-Channel", "8-Channel", "Solid State Relay"],
-      "8. Power": ["18650 Battery", "LiPo Battery", "TP4056", "BMS", "LM2596", "XL6009", "AMS1117", "7805 Regulator", "USB Power Module"],
-      "9. Passive Components": ["Resistors", "Capacitors", "Inductors", "Potentiometers", "Trimmers"],
-      "10. Semiconductors": ["Diodes", "Zener Diodes", "Schottky Diodes", "Bridge Rectifier", "LEDs", "RGB LEDs", "IR LED", "Photodiode", "Phototransistor"],
-      "11. Transistors & MOSFETs": ["BC547", "BC557", "2N2222", "TIP120", "IRF520", "IRLZ44N", "IRFZ44N"],
-      "12. Audio": ["Passive Buzzer", "Active Buzzer", "Speaker", "DFPlayer Mini", "Microphone Module"],
-      "13. Inputs": ["Push Button", "Toggle Switch", "Joystick", "Rotary Encoder", "4x4 Keypad", "DIP Switch"],
-      "14. Timing": ["DS1307 RTC", "DS3231 RTC", "Crystal Oscillator"],
-      "15. Storage": ["MicroSD Module", "EEPROM", "Flash Memory"],
-      "16. Robotics": ["Robot Chassis", "Wheels", "Caster Wheel", "Servo Brackets", "Robot Arm", "Omni Wheel", "Mecanum Wheel", "Encoder Motor"],
-      "17. PCB & Wiring": ["Breadboard", "Perfboard", "PCB", "Jumper Wires", "Male/Female Headers", "Screw Terminals", "Dupont Connectors", "JST Connectors"],
-      "18. Test Equipment": ["Digital Multimeter", "Oscilloscope", "Logic Analyzer", "USB Tester", "LCR Meter", "Bench Power Supply"],
-      "19. Soldering": ["Soldering Iron", "Solder Wire", "Flux", "Desolder Pump", "Hot Air Station", "Wire Stripper", "Side Cutter", "Crimping Tool"],
-      "20. IoT Platforms": ["Arduino IoT Cloud", "Blynk", "ThingSpeak", "MQTT", "AWS IoT", "Firebase", "Adafruit IO", "Ubidots", "Node-RED", "Home Assistant"],
-      "21. Advanced Modules": ["ESP32-CAM", "Voice Recognition", "Load Cell + HX711", "pH Sensor", "EC Sensor", "TDS Sensor", "Turbidity Sensor", "Vibration Sensor", "Flex Sensor", "Strain Gauge", "INA219", "ACS712", "Voltage Sensor Module"]
+      "1. Microcontrollers & Development Boards": ["Arduino Uno", "Arduino Nano", "Arduino Mega 2560", "Arduino Leonardo", "ESP32 DevKit V1", "ESP8266 NodeMCU", "Raspberry Pi Pico"],
+      "2. Sensors": ["HC-SR04 Ultrasonic", "DHT11", "DHT22", "Soil Moisture", "MQ-2", "PIR Motion", "MPU6050", "LDR", "Water Level", "Flame Sensor", "Pulse Sensor"],
+      "3. Communication Modules": ["HC-05", "HC-06", "NRF24L01", "LoRa SX1278", "SIM800L", "RC522 RFID", "Ethernet Shield"],
+      "4. Displays": ["16x2 LCD", "20x4 LCD", "0.96 OLED", "TFT LCD", "7 Segment"],
+      "5. Motors & Drivers": ["TT DC Gear Motor", "SG90", "MG996R", "NEMA17", "L298N", "A4988"],
+      "6. Power & Relays": ["1-Channel Relay", "4-Channel Relay", "18650 Battery", "TP4056", "LM2596"],
+      "7. Passive & Structural": ["Resistor/Capacitor Kit", "LED Kit", "Breadboard", "Jumper Wires", "Robot Chassis"]
     };
 
     const categoryIcons = {
-      "1. Microcontrollers & Development Boards": "cpu",
-      "2. Sensors": "radar",
-      "3. Communication Modules": "wifi",
-      "4. Displays": "monitor",
-      "5. Motors & Actuators": "settings",
-      "6. Motor Drivers": "zap",
-      "7. Relays": "toggle-right",
-      "8. Power": "battery",
-      "9. Passive Components": "minus",
-      "10. Semiconductors": "git-commit",
-      "11. Transistors & MOSFETs": "git-merge",
-      "12. Audio": "volume-2",
-      "13. Inputs": "mouse-pointer-click",
-      "14. Timing": "clock",
-      "15. Storage": "database",
-      "16. Robotics": "bot",
-      "17. PCB & Wiring": "share-2",
-      "18. Test Equipment": "activity",
-      "19. Soldering": "pen-tool",
-      "20. IoT Platforms": "cloud",
-      "21. Advanced Modules": "layers"
+      "1. Microcontrollers & Development Boards": "cpu", "2. Sensors": "radar",
+      "3. Communication Modules": "wifi", "4. Displays": "monitor",
+      "5. Motors & Drivers": "settings", "6. Power & Relays": "zap",
+      "7. Passive & Structural": "box"
     };
 
-    // INITIALIZE DROPDOWN LIST 
+    // UI GENERATION LOGIC
     function initDropdown() {
       const listContainer = document.getElementById('components-list');
       let html = '';
-
       for (const [category, items] of Object.entries(componentData)) {
         html += `<div class="comp-category mt-2 mb-1 pl-2 text-[10px] font-black uppercase text-slate-500 tracking-wider">${category}</div>`;
-        
         items.forEach(item => {
           let price = 100; 
-          if(item.includes("Arduino Uno")) price = 350;
-          if(item.includes("L298N")) price = 150;
-          if(item.includes("Ultrasonic")) price = 50;
-          if(item.includes("ESP32 DevKit")) price = 350;
+          if(item.includes("Arduino Uno")) price = 350; if(item.includes("L298N")) price = 150;
+          if(item.includes("Ultrasonic")) price = 50; if(item.includes("ESP32")) price = 350;
           if(item.includes("OLED")) price = 250;
-
           html += `
             <label class="comp-item flex items-center gap-3 cursor-pointer text-slate-300 hover:text-white hover:bg-slate-800 p-2.5 rounded-lg transition">
               <input type="checkbox" value="${price}" data-name="${item.toUpperCase()}" onchange="updateQuotation()" class="comp-check rounded accent-blue-600 w-4 h-4 flex-shrink-0"> 
@@ -298,243 +430,152 @@
       listContainer.innerHTML = html;
     }
 
-    // INITIALIZE FULL STOREFRONT
     function initStore() {
       const storeContainer = document.getElementById('store-grid-container');
       let html = '';
-
       for (const [category, items] of Object.entries(componentData)) {
-        html += `
-          <div class="mt-12 mb-6 border-b border-slate-800 pb-3 flex items-center gap-3">
-            <i data-lucide="${categoryIcons[category]}" class="w-6 h-6 text-amber-500"></i>
-            <h3 class="text-xl font-bold text-white uppercase tracking-wider">${category.substring(3)}</h3>
-          </div>
-          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        `;
-        
+        html += `<div class="mt-12 mb-6 border-b border-slate-800 pb-3 flex items-center gap-3"><i data-lucide="${categoryIcons[category]}" class="w-6 h-6 text-amber-500"></i><h3 class="text-xl font-bold text-white uppercase tracking-wider">${category.substring(3)}</h3></div><div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">`;
         items.forEach(item => {
           let price = 100; 
-          if(item.includes("Arduino Uno")) price = 350;
-          if(item.includes("L298N")) price = 150;
-          if(item.includes("Ultrasonic")) price = 50;
-          if(item.includes("ESP32 DevKit")) price = 350;
-          if(item.includes("OLED")) price = 250;
-          
-          let icon = categoryIcons[category] || "box";
-
+          if(item.includes("Arduino Uno")) price = 350; if(item.includes("L298N")) price = 150;
+          if(item.includes("Ultrasonic")) price = 50; if(item.includes("ESP32")) price = 350;
           html += `
             <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 hover:border-amber-500/40 transition flex flex-col shadow-lg group">
               <div class="h-20 bg-slate-950 rounded-lg mb-3 flex items-center justify-center border border-slate-800/50 group-hover:scale-105 transition-transform">
-                <i data-lucide="${icon}" class="w-8 h-8 text-slate-500 group-hover:text-amber-500/80 transition-colors"></i>
+                <i data-lucide="${categoryIcons[category]}" class="w-8 h-8 text-slate-500 group-hover:text-amber-500/80 transition-colors"></i>
               </div>
-              <h4 class="text-sm font-bold text-white mb-1 truncate" title="${item}">${item}</h4>
-              <p class="text-slate-400 text-[10px] mb-3 flex-grow">Standard engineering component.</p>
-              <div class="flex items-center justify-between mt-auto pt-3 border-t border-slate-800">
-                <span class="text-md font-extrabold text-white">₹${price}</span>
-                <button class="px-3 py-1.5 bg-slate-800 hover:bg-amber-600 text-slate-300 hover:text-white text-[10px] font-bold rounded-lg transition">
-                  Buy
-                </button>
-              </div>
-            </div>
-          `;
+              <h4 class="text-sm font-bold text-white mb-1 truncate">${item}</h4>
+              <p class="text-slate-400 text-[10px] mb-3 flex-grow">Standard component.</p>
+              <div class="flex items-center justify-between mt-auto pt-3 border-t border-slate-800"><span class="text-md font-extrabold text-white">₹${price}</span><button class="px-3 py-1.5 bg-slate-800 hover:bg-amber-600 text-slate-300 hover:text-white text-[10px] font-bold rounded-lg transition">Buy</button></div>
+            </div>`;
         });
         html += `</div>`;
       }
       storeContainer.innerHTML = html;
     }
 
-    // Modal & Navigation Logic
-    function openAuthModal() { document.getElementById('auth-modal').classList.remove('hidden'); }
-    function closeAuthModal() { document.getElementById('auth-modal').classList.add('hidden'); }
-    function simulateLogin(userName) {
-      closeAuthModal();
-      document.getElementById('nav-user-area').innerHTML = `
-        <div class="flex items-center gap-3">
-          <span class="text-xs text-slate-300 font-semibold bg-slate-900 border border-slate-800 px-3 py-1.5 rounded-full">● Signed in</span>
-          <button onclick="showSection('dashboard')" class="bg-blue-600 hover:bg-blue-500 text-xs text-white font-bold px-4 py-2 rounded-xl">Dashboard</button>
-        </div>
-      `;
-      showSection('dashboard');
-    }
-
-    function showSection(sectionId) {
-      document.getElementById('page-landing').classList.add('hidden');
-      document.getElementById('page-dashboard').classList.add('hidden');
-      document.getElementById('page-order-form').classList.add('hidden');
-      document.getElementById('page-store').classList.add('hidden'); 
-      document.getElementById(`page-${sectionId}`).classList.remove('hidden');
-      if (sectionId === 'order-form') {
-        document.getElementById('form-container').classList.remove('hidden');
-        document.getElementById('success-container').classList.add('hidden');
-      }
-    }
-
-    // DROPDOWN TOGGLE & SEARCH LOGIC
+    // FORM LOGIC
     const dropdownBtn = document.getElementById('dropdown-btn');
     const menu = document.getElementById('components-menu');
-    const searchInput = document.getElementById('component-search');
+    dropdownBtn.addEventListener('click', (e) => { menu.classList.toggle('hidden'); e.stopPropagation(); });
+    menu.addEventListener('click', (e) => e.stopPropagation());
+    document.addEventListener('click', () => { if (!menu.classList.contains('hidden')) menu.classList.add('hidden'); });
 
-    dropdownBtn.addEventListener('click', function(event) {
-      menu.classList.toggle('hidden');
-      event.stopPropagation();
-    });
-    menu.addEventListener('click', function(event) { event.stopPropagation(); });
-    document.addEventListener('click', function(event) {
-      if (!menu.classList.contains('hidden')) menu.classList.add('hidden');
-    });
-
-    searchInput.addEventListener('keyup', function() {
-      let filter = searchInput.value.toLowerCase();
-      let labels = document.querySelectorAll('.comp-item');
-      labels.forEach(label => {
-        let text = label.textContent || label.innerText;
-        label.style.display = text.toLowerCase().indexOf(filter) > -1 ? "" : "none";
+    document.getElementById('component-search').addEventListener('keyup', function() {
+      let filter = this.value.toLowerCase();
+      document.querySelectorAll('.comp-item').forEach(label => {
+        label.style.display = (label.textContent || label.innerText).toLowerCase().indexOf(filter) > -1 ? "" : "none";
       });
     });
 
-    // DYNAMIC 35% MAKING CHARGE
-    function updateQuotation() {
-      let componentsTotal = 0;
-      let selectedCount = 0;
+    window.updateQuotation = () => {
+      let compTotal = 0; let count = 0;
+      document.querySelectorAll('.comp-check:checked').forEach(cb => { compTotal += parseInt(cb.value); count++; });
+      compTotal += (parseInt(document.getElementById('custom-comp-cost').value) || 0);
       
-      document.querySelectorAll('.comp-check:checked').forEach(cb => { 
-        componentsTotal += parseInt(cb.value); 
-        selectedCount++;
-      });
-      
-      const customCost = parseInt(document.getElementById('custom-comp-cost').value) || 0;
-      componentsTotal += customCost;
+      const makingCharge = Math.round(compTotal * 0.35);
+      const grandTotal = compTotal + makingCharge;
 
-      const makingCharge = Math.round(componentsTotal * 0.35);
-      const grandTotal = componentsTotal + makingCharge;
-
-      document.getElementById('txt-comp-cost').innerText = `₹${componentsTotal}`;
+      document.getElementById('txt-comp-cost').innerText = `₹${compTotal}`;
       document.getElementById('txt-making-cost').innerText = `₹${makingCharge}`;
       document.getElementById('quotation-price').innerText = `₹${grandTotal}`;
 
-      const dropdownText = document.getElementById('dropdown-text');
-      if (selectedCount > 0) {
-        dropdownText.innerText = `${selectedCount} component(s) selected`;
-        dropdownText.classList.add('text-white');
-        dropdownText.classList.remove('text-slate-400');
-      } else {
-        dropdownText.innerText = 'Select components...';
-        dropdownText.classList.remove('text-white');
-        dropdownText.classList.add('text-slate-400');
-      }
-    }
+      const ddText = document.getElementById('dropdown-text');
+      if (count > 0) { ddText.innerText = `${count} component(s) selected`; ddText.classList.add('text-white'); ddText.classList.remove('text-slate-400'); } 
+      else { ddText.innerText = 'Select components...'; ddText.classList.remove('text-white'); ddText.classList.add('text-slate-400'); }
+    };
 
-    // GENERATE INVOICE & SEND TO WHATSAPP
-    function handleOrderSubmit(e) {
+    // SUBMIT ORDER TO FIREBASE & WHATSAPP
+    window.handleOrderSubmit = async (e) => {
       e.preventDefault();
+      if (!currentUser) { alert("Please Sign In to submit an order."); openAuthModal(); return; }
+
       const title = document.getElementById('proj-title').value;
-
-      const { jsPDF } = window.jspdf;
-      const doc = new jsPDF();
-
-      doc.setFillColor(0, 0, 0); doc.rect(0, 15, 95, 18, "F"); 
-      doc.setFont("helvetica", "bold"); doc.setFontSize(30);
-      doc.setTextColor(255, 255, 255); doc.text("Invoice", 30, 28);
-
-      doc.setTextColor(135, 156, 137); doc.setFontSize(26);
-      doc.text("MD CREATIONS", 115, 25);
-      doc.setTextColor(0, 0, 0); doc.setFont("helvetica", "normal");
-      doc.setFontSize(10); doc.text("& ARDUINO PROJECTS", 123, 31);
-
-      doc.setFont("helvetica", "bold"); doc.setFontSize(11);
-      doc.text(`TO: ${title.toUpperCase()}`, 20, 55);
-      
-      const today = new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
-      doc.text(`Date: ${today}`, 130, 55);
-
-      doc.setFillColor(0, 0, 0); doc.rect(20, 70, 170, 10, "F");
-      doc.setTextColor(255, 255, 255); doc.setFont("helvetica", "normal"); doc.setFontSize(11);
-      doc.text("DESCRIPTION", 35, 76.5); doc.text("PRICE", 100, 76.5);
-      doc.text("QTY.", 145, 76.5); doc.text("AMOUNT", 168, 76.5);
-
-      doc.setTextColor(0, 0, 0);
-      const startY = 70; let y = 92; let count = 1; let compTotal = 0;
-
-      document.querySelectorAll('.comp-check:checked').forEach((cb) => {
-        let rawName = cb.getAttribute('data-name');
-        let shortName = rawName.length > 25 ? rawName.substring(0, 25) + '...' : rawName;
-        const name = `#${count}  ${shortName}`;
-        const price = cb.value;
-        
-        doc.setFont("times", "italic"); doc.setFontSize(11); doc.text(name, 22, y);
-        doc.setFontSize(14); doc.text(price, 103, y);
-        doc.setFont("helvetica", "normal"); doc.setFontSize(10); doc.text("1", 148, y);
-        doc.setFont("times", "italic"); doc.setFontSize(14); doc.text(price, 175, y);
-        
-        y += 18; compTotal += parseInt(price); count++;
-        if(y > 250) { doc.addPage(); y = 30; } 
-      });
-
-      const customCost = parseInt(document.getElementById('custom-comp-cost').value) || 0;
-      if(customCost > 0) {
-        doc.setFont("times", "italic"); doc.setFontSize(11); doc.text(`#${count}  CUSTOM COMPONENTS`, 22, y);
-        doc.setFontSize(14); doc.text(customCost.toString(), 103, y);
-        doc.setFont("helvetica", "normal"); doc.setFontSize(10); doc.text("1", 148, y);
-        doc.setFont("times", "italic"); doc.setFontSize(14); doc.text(customCost.toString(), 175, y);
-        y += 18; compTotal += customCost;
-      }
-
-      const makingCharge = Math.round(compTotal * 0.35);
-      const grandTotalVal = compTotal + makingCharge;
-      const bottomY = y + 5; 
-
-      doc.setDrawColor(0, 0, 0); doc.setLineWidth(0.3);
-      doc.line(20, startY, 20, bottomY + 30);  
-      doc.line(130, startY, 130, bottomY + 30); 
-      doc.line(160, startY, 160, bottomY + 30); 
-      doc.line(190, startY, 190, bottomY + 30); 
-      doc.line(90, startY, 90, bottomY); 
-
-      doc.setFont("helvetica", "normal"); doc.setFontSize(10); doc.text("Total", 142, bottomY - 3);
-      doc.setFont("times", "italic"); doc.setFontSize(13); doc.text(compTotal.toString(), 175, bottomY - 3);
-      doc.line(130, bottomY, 190, bottomY); 
-
-      let t2 = bottomY + 10;
-      doc.setFont("helvetica", "bold"); doc.setFontSize(10); doc.text("Making Charges 35%", 92, t2 - 3);
-      doc.setFont("helvetica", "normal"); doc.text("-", 148, t2 - 3);
-      doc.setFont("times", "italic"); doc.setFontSize(13); doc.text(makingCharge.toString(), 175, t2 - 3);
-      doc.line(90, t2, 190, t2); 
-
-      let t3 = t2 + 10;
-      doc.setFont("helvetica", "bold"); doc.setFontSize(11); doc.text("Grand Total", 100, t3 - 3);
-      doc.setFont("times", "italic"); doc.setFontSize(13); doc.text(`${grandTotalVal}/- ONLY`, 163, t3 - 3);
-      doc.line(20, t3, 190, t3); 
-
-      doc.setFillColor(160, 165, 170); doc.rect(70, t3 + 15, 60, 25, "F");
-      doc.setTextColor(255, 255, 255); doc.setFont("helvetica", "bold"); doc.setFontSize(18); doc.text("MD", 92, t3 + 28);
-      doc.setFontSize(9); doc.text("CREATIONS", 87, t3 + 34);
-
-      // --- WHATSAPP INTEGRATION ---
-      // IMPORTANT: Change this to your actual WhatsApp Business number (No '+' sign)
-      const yourWhatsAppNumber = "9130390404"; 
       const notes = document.getElementById('proj-notes').value || "No additional notes.";
       
-      const waMessage = `*New Order: ${title.toUpperCase()}*%0A`
-        + `Components: ₹${compTotal}%0A`
-        + `Making Charges (35%): ₹${makingCharge}%0A`
-        + `*Grand Total: ₹${grandTotalVal}*%0A%0A`
-        + `*Client Notes:* ${notes}%0A%0A`
-        + `_I have downloaded the PDF invoice and am ready to proceed._`;
+      // Calculate Totals
+      let compTotal = 0; 
+      let componentListString = "";
+      document.querySelectorAll('.comp-check:checked').forEach(cb => { 
+        compTotal += parseInt(cb.value); 
+        componentListString += `${cb.getAttribute('data-name')} (₹${cb.value}), `;
+      });
+      const customCost = parseInt(document.getElementById('custom-comp-cost').value) || 0;
+      compTotal += customCost;
+      const makingCharge = Math.round(compTotal * 0.35);
+      const grandTotalVal = compTotal + makingCharge;
 
-      const waLink = `https://wa.me/${yourWhatsAppNumber}?text=${waMessage}`;
+      // 1. Write Order to Firestore Database
+      const btnText = document.getElementById('btn-submit-text');
+      btnText.innerText = "Saving to Database...";
+      try {
+        await addDoc(collection(db, "orders"), {
+          clientId: currentUser.uid,
+          clientName: currentUser.displayName,
+          clientEmail: currentUser.email,
+          projectTitle: title,
+          componentsTotal: compTotal,
+          makingCharges: makingCharge,
+          grandTotal: grandTotalVal,
+          items: componentListString,
+          notes: notes,
+          timestamp: serverTimestamp()
+        });
+      } catch (err) {
+        console.error("Error saving to Firestore", err);
+        alert("Warning: Could not save to database, but PDF will still generate.");
+      }
+
+      // 2. Generate PDF
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+      doc.setFillColor(0, 0, 0); doc.rect(0, 15, 95, 18, "F"); 
+      doc.setFont("helvetica", "bold"); doc.setFontSize(30); doc.setTextColor(255, 255, 255); doc.text("Invoice", 30, 28);
+      doc.setTextColor(135, 156, 137); doc.setFontSize(26); doc.text("MD CREATIONS", 115, 25);
+      doc.setTextColor(0, 0, 0); doc.setFont("helvetica", "normal"); doc.setFontSize(10); doc.text("& ARDUINO PROJECTS", 123, 31);
+      doc.setFont("helvetica", "bold"); doc.setFontSize(11); doc.text(`TO: ${title.toUpperCase()}`, 20, 55);
+      doc.text(`Date: ${new Date().toLocaleDateString()}`, 130, 55);
+      doc.setFillColor(0, 0, 0); doc.rect(20, 70, 170, 10, "F"); doc.setTextColor(255, 255, 255); doc.setFont("helvetica", "normal"); doc.text("DESCRIPTION", 35, 76.5); doc.text("PRICE", 100, 76.5); doc.text("QTY.", 145, 76.5); doc.text("AMOUNT", 168, 76.5);
+
+      doc.setTextColor(0, 0, 0);
+      const startY = 70; let y = 92; let count = 1;
+
+      document.querySelectorAll('.comp-check:checked').forEach((cb) => {
+        let name = `#${count}  ${cb.getAttribute('data-name').substring(0, 25)}`;
+        doc.setFont("times", "italic"); doc.setFontSize(11); doc.text(name, 22, y); doc.setFontSize(14); doc.text(cb.value, 103, y); doc.setFont("helvetica", "normal"); doc.setFontSize(10); doc.text("1", 148, y); doc.setFont("times", "italic"); doc.setFontSize(14); doc.text(cb.value, 175, y);
+        y += 18; count++; if(y > 250) { doc.addPage(); y = 30; } 
+      });
+
+      if(customCost > 0) {
+        doc.setFont("times", "italic"); doc.setFontSize(11); doc.text(`#${count}  CUSTOM COMPONENTS`, 22, y); doc.setFontSize(14); doc.text(customCost.toString(), 103, y); doc.setFont("helvetica", "normal"); doc.setFontSize(10); doc.text("1", 148, y); doc.setFont("times", "italic"); doc.setFontSize(14); doc.text(customCost.toString(), 175, y); y += 18;
+      }
+
+      const bottomY = y + 5; 
+      doc.setDrawColor(0, 0, 0); doc.setLineWidth(0.3); doc.line(20, startY, 20, bottomY + 30); doc.line(130, startY, 130, bottomY + 30); doc.line(160, startY, 160, bottomY + 30); doc.line(190, startY, 190, bottomY + 30); doc.line(90, startY, 90, bottomY); 
+      doc.setFont("helvetica", "normal"); doc.setFontSize(10); doc.text("Total", 142, bottomY - 3); doc.setFont("times", "italic"); doc.setFontSize(13); doc.text(compTotal.toString(), 175, bottomY - 3); doc.line(130, bottomY, 190, bottomY); 
+
+      let t2 = bottomY + 10; doc.setFont("helvetica", "bold"); doc.setFontSize(10); doc.text("Making Charges 35%", 92, t2 - 3); doc.setFont("helvetica", "normal"); doc.text("-", 148, t2 - 3); doc.setFont("times", "italic"); doc.setFontSize(13); doc.text(makingCharge.toString(), 175, t2 - 3); doc.line(90, t2, 190, t2); 
+      let t3 = t2 + 10; doc.setFont("helvetica", "bold"); doc.setFontSize(11); doc.text("Grand Total", 100, t3 - 3); doc.setFont("times", "italic"); doc.setFontSize(13); doc.text(`${grandTotalVal}/- ONLY`, 163, t3 - 3); doc.line(20, t3, 190, t3); 
+
+      doc.setFillColor(160, 165, 170); doc.rect(70, t3 + 15, 60, 25, "F"); doc.setTextColor(255, 255, 255); doc.setFont("helvetica", "bold"); doc.setFontSize(18); doc.text("MD", 92, t3 + 28); doc.setFontSize(9); doc.text("CREATIONS", 87, t3 + 34);
+
+      // 3. Send to WhatsApp
+      // ----------------------------------------------------------------------
+      // CHANGE THIS: Replace with your actual WhatsApp Business number (No '+' sign)
+      const yourWhatsAppNumber = "919000000000"; 
+      // ----------------------------------------------------------------------
       
-      // Open WhatsApp in a new tab
-      window.open(waLink, '_blank');
+      const waMessage = `*New Order: ${title.toUpperCase()}*%0AClient: ${currentUser.displayName}%0AComponents: ₹${compTotal}%0AMaking Charges: ₹${makingCharge}%0A*Grand Total: ₹${grandTotalVal}*%0A%0A*Notes:* ${notes}%0A%0A_PDF Invoice generated._`;
+      window.open(`https://wa.me/${yourWhatsAppNumber}?text=${waMessage}`, '_blank');
 
-      // Trigger the PDF download
       doc.save(`Invoice_${title.replace(/\s+/g, '_')}.pdf`);
       
-      // Update UI
+      btnText.innerText = "Generate Exact Invoice";
       document.getElementById('form-container').classList.add('hidden');
       document.getElementById('success-container').classList.remove('hidden');
-    }
+    };
 
-    // Boot functions
+    // Boot
     initDropdown();
     initStore();
     lucide.createIcons();
