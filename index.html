@@ -19,8 +19,7 @@
   <header class="border-b border-slate-800 bg-slate-900/50 backdrop-blur sticky top-0 z-40">
     <div class="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
       <div class="flex items-center gap-2">
-        <!-- Replace 'logo.png' with your actual logo file name if it is different -->
-        <img src="logo.png" alt="MD Creations" class="w-8 h-8 rounded-full bg-white object-cover" onerror="this.outerHTML='<div class=\\'w-8 h-8 bg-white rounded flex items-center justify-center text-slate-900 font-black text-sm\\'>MD</div>'">
+        <img src="favicon.ico" alt="MD Creations" class="w-8 h-8 rounded-full bg-white object-cover" onerror="this.outerHTML='<div class=\\'w-8 h-8 bg-white rounded flex items-center justify-center text-slate-900 font-black text-sm\\'>MD</div>'">
         <h1 class="text-xl font-bold tracking-wider">MD CREATIONS</h1>
       </div>
       <div id="navArea"></div>
@@ -28,7 +27,7 @@
   </header>
 
   <!-- Hero Section -->
-  <main class="flex-grow flex flex-col items-center pt-16 px-4">
+  <main class="flex-grow flex flex-col items-center pt-16 pb-16 px-4">
     <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 text-blue-400 text-xs font-semibold mb-6 border border-blue-500/20">
       <i data-lucide="rocket" class="w-3 h-3"></i> Engineering & Web Solutions
     </div>
@@ -43,14 +42,78 @@
       Get Started Now <i data-lucide="arrow-right" class="w-4 h-4"></i>
     </button>
 
-    <!-- Order Form Section (Hidden until Get Started is clicked by a logged-in user) -->
+    <!-- Components & Purchase Section -->
+    <div id="componentsSection" class="w-full max-w-5xl mt-16 px-4">
+      <div class="text-center mb-10">
+        <h3 class="text-2xl md:text-3xl font-bold mb-3">Standard Components Library</h3>
+        <p class="text-slate-400 text-sm">Select standard parts for your embedded systems or request custom IoT modules.</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        
+        <!-- Component 1 -->
+        <div class="bg-slate-800/40 border border-slate-700 rounded-2xl p-5 hover:border-blue-500/50 transition flex flex-col h-full">
+          <div class="h-32 bg-slate-900 rounded-xl mb-4 flex items-center justify-center border border-slate-700/50">
+            <i data-lucide="cpu" class="w-12 h-12 text-slate-500"></i>
+          </div>
+          <h4 class="font-bold text-lg mb-1">ESP32 DevKit V1</h4>
+          <p class="text-slate-400 text-xs mb-4 flex-grow">Dual-core WiFi & Bluetooth MCU, ideal for advanced IoT and SCADA integration.</p>
+          <div class="flex justify-between items-center mt-auto">
+            <span class="text-green-400 font-black">₹450</span>
+            <button onclick="addPartToForm('ESP32 DevKit V1', 450)" class="bg-slate-700 hover:bg-blue-600 px-3 py-1.5 rounded-lg text-xs font-bold transition">Add to Build</button>
+          </div>
+        </div>
+
+        <!-- Component 2 -->
+        <div class="bg-slate-800/40 border border-slate-700 rounded-2xl p-5 hover:border-blue-500/50 transition flex flex-col h-full">
+          <div class="h-32 bg-slate-900 rounded-xl mb-4 flex items-center justify-center border border-slate-700/50">
+            <i data-lucide="cpu" class="w-12 h-12 text-slate-500"></i>
+          </div>
+          <h4 class="font-bold text-lg mb-1">ESP8266 NodeMCU</h4>
+          <p class="text-slate-400 text-xs mb-4 flex-grow">Standard WiFi module for basic rovers and wireless sensor networks.</p>
+          <div class="flex justify-between items-center mt-auto">
+            <span class="text-green-400 font-black">₹280</span>
+            <button onclick="addPartToForm('ESP8266 NodeMCU', 280)" class="bg-slate-700 hover:bg-blue-600 px-3 py-1.5 rounded-lg text-xs font-bold transition">Add to Build</button>
+          </div>
+        </div>
+
+        <!-- Component 3 -->
+        <div class="bg-slate-800/40 border border-slate-700 rounded-2xl p-5 hover:border-blue-500/50 transition flex flex-col h-full">
+          <div class="h-32 bg-slate-900 rounded-xl mb-4 flex items-center justify-center border border-slate-700/50">
+            <i data-lucide="settings-2" class="w-12 h-12 text-slate-500"></i>
+          </div>
+          <h4 class="font-bold text-lg mb-1">L298N Motor Driver</h4>
+          <p class="text-slate-400 text-xs mb-4 flex-grow">Dual H-Bridge motor controller for high-power DC motor robotics.</p>
+          <div class="flex justify-between items-center mt-auto">
+            <span class="text-green-400 font-black">₹150</span>
+            <button onclick="addPartToForm('L298N Motor Driver', 150)" class="bg-slate-700 hover:bg-blue-600 px-3 py-1.5 rounded-lg text-xs font-bold transition">Add to Build</button>
+          </div>
+        </div>
+
+        <!-- Component 4 -->
+        <div class="bg-slate-800/40 border border-slate-700 rounded-2xl p-5 hover:border-blue-500/50 transition flex flex-col h-full">
+          <div class="h-32 bg-slate-900 rounded-xl mb-4 flex items-center justify-center border border-slate-700/50">
+            <i data-lucide="droplets" class="w-12 h-12 text-slate-500"></i>
+          </div>
+          <h4 class="font-bold text-lg mb-1">Soil Moisture Sensor</h4>
+          <p class="text-slate-400 text-xs mb-4 flex-grow">Analog sensor module for smart irrigation and agricultural automation projects.</p>
+          <div class="flex justify-between items-center mt-auto">
+            <span class="text-green-400 font-black">₹90</span>
+            <button onclick="addPartToForm('Soil Moisture Sensor', 90)" class="bg-slate-700 hover:bg-blue-600 px-3 py-1.5 rounded-lg text-xs font-bold transition">Add to Build</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Order Form Section (Hidden until Get Started is clicked) -->
     <div id="orderSection" class="hidden w-full max-w-3xl mt-16 bg-slate-800/50 border border-slate-700 p-6 md:p-8 rounded-2xl shadow-xl">
-      <h3 class="text-xl font-bold mb-6">Build Your Project</h3>
+      <h3 class="text-xl font-bold mb-6">Build Your Project Portal</h3>
       
       <div class="space-y-5">
         <div>
           <label class="block text-xs font-bold text-slate-400 mb-2 uppercase">Project Title</label>
-          <input type="text" id="projectTitle" placeholder="e.g., WiFi Rover 3.0" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500 transition">
+          <input type="text" id="projectTitle" placeholder="e.g., MD's Titan Rover 3.0" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500 transition">
         </div>
         
         <div>
@@ -60,7 +123,7 @@
 
         <div>
           <label class="block text-xs font-bold text-slate-400 mb-2 uppercase">Additional Settings or Changes</label>
-          <textarea id="instructions" rows="3" placeholder="Enter any specific wiring instructions, custom features, or SCADA requirements..." class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500 transition"></textarea>
+          <textarea id="instructions" rows="4" placeholder="Enter specific wiring instructions, custom features, or SCADA requirements..." class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500 transition"></textarea>
         </div>
 
         <!-- Price Breakdown & Submit -->
@@ -86,8 +149,7 @@
         <i data-lucide="x" class="w-5 h-5"></i>
       </button>
       <div class="flex flex-col items-center py-6">
-        <!-- Replace 'logo.png' with your actual logo file name if it is different -->
-        <img src="logo.png" alt="MD Creations" class="w-16 h-16 rounded-lg mb-4 object-cover" onerror="this.outerHTML='<div class=\\'w-12 h-12 bg-white rounded-lg flex items-center justify-center text-slate-900 font-black text-xl mb-4\\'>MD</div>'">
+        <img src="favicon.ico" alt="MD Creations" class="w-16 h-16 rounded-lg mb-4 object-cover" onerror="this.outerHTML='<div class=\\'w-12 h-12 bg-white rounded-lg flex items-center justify-center text-slate-900 font-black text-xl mb-4\\'>MD</div>'">
         <h3 class="text-xl font-bold text-center mb-2">Welcome to MD CREATIONS</h3>
         <p class="text-slate-400 text-sm text-center mb-8">Sign in to save your custom projects and build orders.</p>
         
@@ -102,11 +164,40 @@
   <script>
     lucide.createIcons();
 
+    // UI and Modal Functions
     window.showAuthModal = function() {
       document.getElementById('authModal').classList.remove('hidden');
     }
     window.closeAuthModal = function() {
       document.getElementById('authModal').classList.add('hidden');
+    }
+
+    // Dynamic Parts Adder from Component Section
+    window.addPartToForm = function(partName, price) {
+      const instructions = document.getElementById('instructions');
+      const costInput = document.getElementById('componentCost');
+      
+      // Add part to instructions
+      if (instructions.value === "") {
+        instructions.value = `Added Parts:\n- ${partName}`;
+      } else {
+        instructions.value += `\n- ${partName}`;
+      }
+
+      // Add price to total
+      let currentCost = parseFloat(costInput.value) || 0;
+      costInput.value = currentCost + price;
+      
+      // Recalculate
+      window.calculateTotal();
+      
+      // Scroll down to the order section if it's visible, or click Get Started
+      const orderSection = document.getElementById('orderSection');
+      if (orderSection.classList.contains('hidden')) {
+        window.handleGetStarted();
+      } else {
+        orderSection.scrollIntoView({ behavior: 'smooth' });
+      }
     }
 
     // Cost Calculation
@@ -128,7 +219,6 @@
     import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
     import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-    // Your actual Firebase Config is initialized here
     const firebaseConfig = {
       apiKey: "AIzaSyACdSoGxY5g0VRZvGtvysYMLwjGUyUz06s",
       authDomain: "md-creation-c9871.firebaseapp.com",
@@ -171,7 +261,7 @@
       if (user) {
         authModal.classList.add('hidden');
         
-        // Admin permissions checking against your emails
+        // Admin permissions logic
         const adminBtnHTML = (user.email === 'deshmukhmalhar017@gmail.com' || user.email === 'mdcreation010@gmail.com') 
           ? `<button onclick="window.location.href='/admin'" class="text-xs text-blue-400 border border-blue-500/30 px-3 py-1.5 rounded-lg hover:bg-blue-500/10 transition">Admin</button>` 
           : '';
@@ -235,8 +325,8 @@
 
         alert("Order successfully saved to database!");
         
-        // Remember to change 91XXXXXXXXXX to your real WhatsApp number!
         const waMessage = `Hello MD Creations!%0A%0A*New Order:* ${projectTitle}%0A*Component Cost:* ₹${compCost}%0A*Total Est:* ₹${compCost + (compCost * 0.35)}`;
+        // Make sure to add your WhatsApp number here
         window.open(`https://wa.me/91XXXXXXXXXX?text=${waMessage}`, '_blank');
         
         document.getElementById('projectTitle').value = '';
