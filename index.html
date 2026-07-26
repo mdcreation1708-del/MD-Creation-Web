@@ -1,587 +1,264 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>MD CREATIONS — Custom Engineering Portal</title>
-
-  <!-- Cache-Busting Favicon Link -->
-  <link rel="icon" type="image/x-icon" href="favicon.ico?v=2">
-
-  <!-- Tailwind CSS & Lucide Icons -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MD CREATIONS — Engineering & Web Solutions</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
-  <!-- jsPDF for Instant Invoices -->
+  <!-- Optional: jsPDF for Invoice Generation -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
-    body { font-family: 'Plus Jakarta Sans', sans-serif; }
-    
-    .custom-scrollbar::-webkit-scrollbar { width: 6px; }
-    .custom-scrollbar::-webkit-scrollbar-track { background: #0f172a; border-radius: 8px; }
-    .custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; border-radius: 8px; }
+    body { background-color: #0b1120; color: #ffffff; }
+    .hidden { display: none !important; }
   </style>
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col justify-between selection:bg-blue-500 selection:text-white">
+<body class="min-h-screen flex flex-col font-sans">
 
-  <!-- NAVIGATION BAR -->
-  <nav class="border-b border-slate-900 bg-slate-950/80 backdrop-blur sticky top-0 z-30">
-    <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-      <div class="flex items-center gap-3 cursor-pointer" onclick="showSection('landing')">
-        <img src="favicon.ico?v=2" alt="MD Creations Logo" class="w-10 h-10 rounded-xl shadow-lg shadow-blue-500/20 object-cover">
-        <span class="font-extrabold text-xl tracking-tight text-white">MD CREATIONS</span>
+  <!-- Navigation Bar -->
+  <header class="border-b border-slate-800 bg-slate-900/50 backdrop-blur sticky top-0 z-40">
+    <div class="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
+      <div class="flex items-center gap-2">
+        <div class="w-8 h-8 bg-white rounded flex items-center justify-center text-slate-900 font-black text-sm">MD</div>
+        <h1 class="text-xl font-bold tracking-wider">MD CREATIONS</h1>
       </div>
+      <!-- Dynamic Nav Area (Injects Login OR Avatar/Logout) -->
+      <div id="navArea"></div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <main class="flex-grow flex flex-col items-center pt-16 px-4">
+    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 text-blue-400 text-xs font-semibold mb-6 border border-blue-500/20">
+      <i data-lucide="rocket" class="w-3 h-3"></i> Engineering & Web Solutions
+    </div>
+    <h2 class="text-4xl md:text-5xl font-extrabold text-center max-w-2xl leading-tight mb-6">
+      Turn Your Technical Concepts Into <span class="text-blue-500">Working Products</span>
+    </h2>
+    <p class="text-slate-400 text-center max-w-xl mb-10 text-sm md:text-base leading-relaxed">
+      Order custom IoT systems, embedded hardware prototypes, or web portals with automated component-based cost estimations.
+    </p>
+    <button onclick="showAuthModal()" id="getStartedBtn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-xl transition flex items-center gap-2 shadow-lg shadow-blue-500/20">
+      Get Started Now <i data-lucide="arrow-right" class="w-4 h-4"></i>
+    </button>
+
+    <!-- Order Form Section (Hidden until logged in) -->
+    <div id="orderSection" class="hidden w-full max-w-3xl mt-16 bg-slate-800/50 border border-slate-700 p-6 md:p-8 rounded-2xl shadow-xl">
+      <h3 class="text-xl font-bold mb-6">Build Your Project</h3>
       
-      <div id="nav-user-area" class="flex items-center gap-3">
-        <!-- Default State -->
-        <button onclick="openAuthModal()" class="bg-blue-600 hover:bg-blue-500 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition flex items-center gap-2 shadow-lg shadow-blue-600/20">
-          <span>Sign In / Register</span>
-          <i data-lucide="arrow-right" class="w-4 h-4"></i>
-        </button>
+      <div class="space-y-5">
+        <div>
+          <label class="block text-xs font-bold text-slate-400 mb-2 uppercase">Project Title</label>
+          <input type="text" id="projectTitle" placeholder="e.g., Auto Rover" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500 transition">
+        </div>
+        
+        <div>
+          <label class="block text-xs font-bold text-slate-400 mb-2 uppercase">Custom Components Total Cost (₹)</label>
+          <input type="number" id="componentCost" placeholder="e.g., 1000" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500 transition" oninput="calculateTotal()">
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-slate-400 mb-2 uppercase">Additional Settings or Changes</label>
+          <textarea id="instructions" rows="3" placeholder="Enter any specific wiring instructions, custom features..." class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500 transition"></textarea>
+        </div>
+
+        <!-- Price Breakdown & Submit -->
+        <div class="bg-slate-900 border border-slate-700 rounded-xl p-5 flex flex-col md:flex-row justify-between items-center gap-4 mt-6">
+          <div>
+            <div class="text-xs font-bold text-blue-400 uppercase mb-1">Price Breakdown</div>
+            <div class="text-sm text-slate-400">Components Cost: <span class="text-white" id="displayCompCost">₹0</span></div>
+            <div class="text-sm text-slate-400">Making Charges (35%): <span class="text-green-400" id="displayMakingCharge">₹0</span></div>
+            <div class="text-3xl font-bold mt-2" id="displayTotal">₹0</div>
+          </div>
+          <button id="submitOrderBtn" class="w-full md:w-auto bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-xl transition flex items-center justify-center gap-2 shadow-lg">
+            <i data-lucide="save" class="w-4 h-4"></i> Save to Database
+          </button>
+        </div>
       </div>
     </div>
-  </nav>
-
-  <!-- MAIN APP CONTAINER -->
-  <main id="app-content" class="flex-grow">
-    
-    <!-- PAGE 1: LANDING PAGE -->
-    <section id="page-landing" class="max-w-5xl mx-auto px-6 pt-16 pb-16 text-center">
-      <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-950/60 border border-blue-800/40 text-blue-400 text-xs font-semibold mb-8">
-        <i data-lucide="rocket" class="w-3.5 h-3.5"></i> Engineering & Web Solutions
-      </div>
-      <h1 class="text-4xl sm:text-6xl font-extrabold text-white tracking-tight leading-tight mb-6">
-        Turn Your Technical Concepts Into <span class="bg-gradient-to-r from-blue-400 to-indigo-400 bg-clip-text text-transparent">Working Products</span>
-      </h1>
-      <p class="text-slate-400 text-lg max-w-2xl mx-auto mb-10 leading-relaxed">
-        Order custom IoT systems, embedded hardware prototypes, or web portals with automated component-based cost estimations.
-      </p>
-      <button onclick="openAuthModal()" class="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold px-8 py-4 rounded-xl shadow-xl shadow-blue-600/25 transition transform hover:-translate-y-0.5 inline-flex items-center gap-2">
-        <span>Get Started Now</span>
-        <i data-lucide="arrow-right" class="w-5 h-5"></i>
-      </button>
-    </section>
-
-    <!-- PAGE 2: CLIENT DASHBOARD -->
-    <section id="page-dashboard" class="hidden max-w-5xl mx-auto px-6 py-12">
-      <div class="text-center mb-10">
-        <h2 class="text-3xl font-extrabold text-white">Welcome to MD CREATIONS Hub</h2>
-        <p class="mt-2 text-slate-400">Select a pathway below to build your custom project requirement or browse hardware.</p>
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-        <div onclick="showSection('order-form')" class="group bg-slate-900 border border-slate-800 hover:border-blue-500/50 rounded-2xl p-8 transition cursor-pointer flex flex-col justify-between shadow-xl">
-          <div>
-            <div class="w-14 h-14 bg-blue-600/10 border border-blue-500/20 rounded-2xl flex items-center justify-center text-blue-400 mb-6 group-hover:scale-105 transition-transform">
-              <i data-lucide="rocket" class="w-7 h-7"></i>
-            </div>
-            <h3 class="text-2xl font-bold text-white mb-2 group-hover:text-blue-400 transition">Project Order Portal</h3>
-            <p class="text-slate-400 text-sm leading-relaxed mb-6">Select hardware components, auto-calculate 35% making charges, pay securely, and download your itemized invoice.</p>
-          </div>
-          <div class="pt-4 border-t border-slate-800 flex items-center text-blue-400 font-semibold gap-2">
-            <span>Start New Order</span>
-            <i data-lucide="arrow-right" class="w-4 h-4"></i>
-          </div>
-        </div>
-
-        <div onclick="showSection('store')" class="group bg-slate-900 border border-slate-800 hover:border-amber-500/50 rounded-2xl p-8 transition cursor-pointer flex flex-col justify-between shadow-xl">
-          <div>
-            <div class="w-14 h-14 bg-amber-500/10 border border-amber-500/20 rounded-2xl flex items-center justify-center text-amber-400 mb-6 group-hover:scale-105 transition-transform">
-              <i data-lucide="cpu" class="w-7 h-7"></i>
-            </div>
-            <h3 class="text-2xl font-bold text-white mb-2 group-hover:text-amber-400 transition">Electronics Store & Info Hub</h3>
-            <p class="text-slate-400 text-sm leading-relaxed mb-6">Browse microcontrollers, sensors, and modules. View technical pinout specifications or purchase parts directly.</p>
-          </div>
-          <div class="pt-4 border-t border-slate-800 flex items-center text-amber-400 font-semibold gap-2">
-            <span>Enter Storefront</span>
-            <i data-lucide="arrow-right" class="w-4 h-4"></i>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- PAGE 3: DYNAMIC ORDER FORM -->
-    <section id="page-order-form" class="hidden max-w-3xl mx-auto px-6 py-8">
-      <button onclick="showSection('dashboard')" class="inline-flex items-center gap-2 text-slate-400 hover:text-white text-sm font-semibold mb-6">
-        <i data-lucide="arrow-left" class="w-4 h-4"></i> Back to Hub
-      </button>
-
-      <div id="form-container" class="bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 shadow-2xl">
-        <h2 class="text-2xl font-bold text-white mb-2">Project Requirement Form</h2>
-        <p class="text-slate-400 text-sm mb-6">Select components to build your itemized 35% making charge invoice.</p>
-
-        <form onsubmit="handleOrderSubmit(event)" class="space-y-5">
-          <div>
-            <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">Project Title (Displays on Invoice)</label>
-            <input id="proj-title" type="text" required placeholder="e.g., Autonomous Rover" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-blue-500" />
-          </div>
-
-          <div class="relative">
-            <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">Select Hardware Components</label>
-            <button type="button" id="dropdown-btn" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm text-slate-400 focus:outline-none focus:border-blue-500 text-left flex justify-between items-center transition hover:border-slate-700">
-              <span id="dropdown-text">Select components...</span>
-              <i data-lucide="chevron-down" class="w-4 h-4"></i>
-            </button>
-            
-            <div id="components-menu" class="hidden absolute z-20 w-full mt-2 bg-slate-900 border border-slate-700 rounded-xl shadow-2xl overflow-hidden flex flex-col h-80">
-              <div class="p-3 bg-slate-950 border-b border-slate-800 sticky top-0 z-30">
-                <div class="relative">
-                  <i data-lucide="search" class="absolute left-3 top-2.5 w-4 h-4 text-slate-500"></i>
-                  <input type="text" id="component-search" placeholder="Search for components..." class="w-full bg-slate-900 border border-slate-700 rounded-lg pl-9 pr-4 py-2 text-sm text-white focus:outline-none focus:border-blue-500" />
-                </div>
-              </div>
-              <div id="components-list" class="flex-grow overflow-y-auto custom-scrollbar p-2 space-y-1 pb-4"></div>
-            </div>
-          </div>
-
-          <div>
-            <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">Or Enter Custom Components Total Cost (₹)</label>
-            <input id="custom-comp-cost" type="number" min="0" placeholder="e.g., 1000" oninput="updateQuotation()" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-blue-500" />
-          </div>
-
-          <div>
-            <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">Additional Settings or Changes</label>
-            <textarea id="proj-notes" rows="3" placeholder="Enter any specific wiring instructions, custom features, or additional modifications needed..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-blue-500 custom-scrollbar"></textarea>
-          </div>
-
-          <div class="p-5 bg-blue-950/40 border border-blue-500/30 rounded-xl flex flex-col sm:flex-row justify-between items-center gap-4 mt-6">
-            <div class="space-y-1">
-              <span class="text-[10px] uppercase font-bold text-blue-400 tracking-wider">Price Breakdown</span>
-              <div class="text-xs text-slate-300 space-y-0.5">
-                <p>Components Cost: <span id="txt-comp-cost" class="font-bold text-white">₹0</span></p>
-                <p>Making Charges (35%): <span id="txt-making-cost" class="font-bold text-emerald-400">₹0</span></p>
-              </div>
-              <p id="quotation-price" class="text-3xl font-extrabold text-white pt-1">₹0</p>
-            </div>
-            <button type="submit" class="w-full sm:w-auto bg-blue-600 hover:bg-blue-500 text-white font-bold px-6 py-3.5 rounded-xl transition shadow-lg shadow-blue-600/30 flex items-center justify-center gap-2">
-              <i data-lucide="file-down" class="w-4 h-4"></i>
-              <span id="btn-submit-text">Generate Exact Invoice</span>
-            </button>
-          </div>
-        </form>
-      </div>
-
-      <div id="success-container" class="hidden bg-slate-900 border border-slate-800 rounded-2xl p-8 text-center shadow-2xl">
-        <i data-lucide="check-circle-2" class="w-16 h-16 text-emerald-400 mx-auto mb-4"></i>
-        <h2 class="text-2xl font-bold text-white mb-2">Invoice Generated!</h2>
-        <p class="text-slate-400 text-sm max-w-md mx-auto mb-6">
-          Your itemized layout PDF has been downloaded. Your order has been saved and you are being redirected to WhatsApp.
-        </p>
-        <button onclick="showSection('dashboard')" class="bg-slate-800 hover:bg-slate-700 text-white text-sm font-semibold px-6 py-2.5 rounded-xl transition">
-          Return to Dashboard
-        </button>
-      </div>
-    </section>
-
-    <!-- PAGE 4: ELECTRONICS STORE -->
-    <section id="page-store" class="hidden max-w-6xl mx-auto px-6 py-8">
-      <button onclick="showSection('dashboard')" class="inline-flex items-center gap-2 text-slate-400 hover:text-white text-sm font-semibold mb-6">
-        <i data-lucide="arrow-left" class="w-4 h-4"></i> Back to Hub
-      </button>
-
-      <div class="mb-10">
-        <div class="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 mb-2">
-          <h2 class="text-3xl font-extrabold text-white">Electronics Store & Inventory</h2>
-          <span class="inline-flex w-fit items-center gap-1.5 px-3 py-1 bg-amber-500/10 text-amber-400 border border-amber-500/20 rounded-full text-xs font-bold uppercase tracking-wider shadow-lg shadow-amber-500/10">
-            <i data-lucide="clock" class="w-3.5 h-3.5"></i> Coming Soon
-          </span>
-        </div>
-        <p class="text-slate-400">Explore technical specifications, pinout configurations, and purchase hardware directly.</p>
-      </div>
-
-      <div id="store-grid-container" class="opacity-60 pointer-events-none select-none grayscale-[30%]"></div>
-    </section>
-
-    <!-- PAGE 5: ADMIN DASHBOARD (HIDDEN) -->
-    <section id="page-admin" class="hidden max-w-6xl mx-auto px-6 py-8">
-      <div class="mb-8">
-        <h2 class="text-3xl font-extrabold text-white mb-2">Owner Dashboard</h2>
-        <p class="text-emerald-400 text-sm font-semibold">Authorized Access Only.</p>
-      </div>
-
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <!-- Order Database Table -->
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl">
-          <div class="flex items-center gap-3 mb-6 border-b border-slate-800 pb-4">
-            <div class="bg-blue-600/20 p-2 rounded-lg text-blue-400"><i data-lucide="list-ordered" class="w-5 h-5"></i></div>
-            <h3 class="text-xl font-bold text-white">Recent Orders</h3>
-          </div>
-          <div class="overflow-x-auto">
-            <table class="w-full text-left text-sm text-slate-400">
-              <thead class="text-xs uppercase text-slate-500 border-b border-slate-800 bg-slate-950/50">
-                <tr><th class="px-4 py-3">Client Name</th><th class="px-4 py-3">Project Title</th><th class="px-4 py-3">Total (₹)</th></tr>
-              </thead>
-              <tbody id="admin-orders-table">
-                <!-- Javascript will inject rows here -->
-                <tr><td colspan="3" class="text-center py-4 text-slate-600">Loading orders...</td></tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        <!-- User Database Table -->
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl">
-          <div class="flex items-center gap-3 mb-6 border-b border-slate-800 pb-4">
-            <div class="bg-amber-500/20 p-2 rounded-lg text-amber-400"><i data-lucide="users" class="w-5 h-5"></i></div>
-            <h3 class="text-xl font-bold text-white">Registered Users</h3>
-          </div>
-          <div class="overflow-x-auto">
-            <table class="w-full text-left text-sm text-slate-400">
-              <thead class="text-xs uppercase text-slate-500 border-b border-slate-800 bg-slate-950/50">
-                <tr><th class="px-4 py-3">Name</th><th class="px-4 py-3">Email</th></tr>
-              </thead>
-              <tbody id="admin-users-table">
-                <!-- Javascript will inject rows here -->
-                <tr><td colspan="2" class="text-center py-4 text-slate-600">Loading users...</td></tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    </section>
-
   </main>
 
-  <!-- AUTH MODAL -->
-  <div id="auth-modal" class="hidden fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
-    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-md w-full p-6 relative shadow-2xl">
-      <button onclick="closeAuthModal()" class="absolute top-4 right-4 text-slate-500 hover:text-white">
+  <!-- Auth Modal (Hidden by Default) -->
+  <div id="authModal" class="fixed inset-0 z-50 hidden bg-black/80 backdrop-blur-sm flex items-center justify-center px-4">
+    <div class="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-md p-6 relative shadow-2xl">
+      <button onclick="closeAuthModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white transition">
         <i data-lucide="x" class="w-5 h-5"></i>
       </button>
-      <div class="text-center mb-6">
-        <img src="favicon.ico?v=2" alt="MD Creations Logo" class="w-12 h-12 rounded-xl mx-auto mb-3 shadow-lg shadow-blue-500/20 object-cover">
-        <h2 class="text-2xl font-bold text-white">Welcome to MD CREATIONS</h2>
-        <p class="text-slate-400 text-sm mt-2">Sign in to save your custom projects and build orders.</p>
+      <div class="flex flex-col items-center py-6">
+        <div class="w-12 h-12 bg-white rounded-lg flex items-center justify-center text-slate-900 font-black text-xl mb-4">MD</div>
+        <h3 class="text-xl font-bold text-center mb-2">Welcome to MD CREATIONS</h3>
+        <p class="text-slate-400 text-sm text-center mb-8">Sign in to save your custom projects and build orders.</p>
+        
+        <button id="googleSignInBtn" class="w-full bg-white hover:bg-gray-100 text-slate-900 font-bold py-3 px-4 rounded-xl transition flex items-center justify-center gap-3">
+          <svg class="w-5 h-5" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+          Continue with Google
+        </button>
       </div>
-      <button onclick="executeGoogleLogin()" class="w-full bg-slate-800 hover:bg-slate-700 border border-slate-700 text-white font-semibold py-3 px-4 rounded-xl transition flex items-center justify-center gap-3 mb-2 shadow-lg">
-        <svg class="w-5 h-5" viewBox="0 0 24 24"><path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
-        <span>Continue with Google</span>
-      </button>
     </div>
   </div>
 
-  <!-- FIREBASE & MAIN LOGIC MODULE -->
-  <script type="module">
-    // 1. IMPORT FIREBASE (v10 Modular SDK)
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-    import { getFirestore, doc, setDoc, collection, addDoc, getDocs, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+  <script>
+    // Initialize Lucide Icons
+    lucide.createIcons();
 
-    // 2. YOUR FIREBASE CONFIGURATION (From Screenshot)
+    // Modal Control Functions (Exposed to Window for HTML onclick attributes)
+    window.showAuthModal = function() {
+      document.getElementById('authModal').classList.remove('hidden');
+    }
+    window.closeAuthModal = function() {
+      document.getElementById('authModal').classList.add('hidden');
+    }
+
+    // Cost Calculation Logic
+    window.calculateTotal = function() {
+      const costInput = document.getElementById('componentCost').value;
+      const compCost = parseFloat(costInput) || 0;
+      const makingCharge = compCost * 0.35; // 35% Making Charge
+      const total = compCost + makingCharge;
+
+      document.getElementById('displayCompCost').innerText = `₹${compCost.toFixed(0)}`;
+      document.getElementById('displayMakingCharge').innerText = `₹${makingCharge.toFixed(0)}`;
+      document.getElementById('displayTotal').innerText = `₹${total.toFixed(0)}`;
+    }
+  </script>
+
+  <!-- Firebase Setup & Logic -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    // 🔴 IMPORTANT: REPLACE THIS OBJECT WITH YOUR FIREBASE PROJECT CONFIG
     const firebaseConfig = {
-      apiKey: "AIzaSyACdSoGxY5g0VRZvGtvysYMLwjGUyUz06s",
+      apiKey: "YOUR_API_KEY",
       authDomain: "md-creation-c9871.firebaseapp.com",
       projectId: "md-creation-c9871",
-      storageBucket: "md-creation-c9871.firebasestorage.app",
-      messagingSenderId: "650714309909",
-      appId: "1:650714309909:web:b19a86843c7442d8b2b51c"
+      storageBucket: "md-creation-c9871.appspot.com",
+      messagingSenderId: "YOUR_SENDER_ID",
+      appId: "YOUR_APP_ID"
     };
 
-    // 3. INITIALIZE FIREBASE
+    // Initialize Firebase
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getFirestore(app);
     const provider = new GoogleAuthProvider();
 
-    // ----------------------------------------------------------------------
-    // CHANGE THIS: Add your actual Google Email here to unlock the Dashboard
-    const ADMIN_EMAIL = "mdcreation1708@gmail.com"; 
-    // ----------------------------------------------------------------------
+    const navArea = document.getElementById('navArea');
+    const authModal = document.getElementById('authModal');
+    const googleSignInBtn = document.getElementById('googleSignInBtn');
+    const orderSection = document.getElementById('orderSection');
+    const getStartedBtn = document.getElementById('getStartedBtn');
+    const submitOrderBtn = document.getElementById('submitOrderBtn');
 
-    // GLOBALS FOR UI
-    let currentUser = null;
-
-    // FIREBASE AUTHENTICATION LOGIC
-    window.executeGoogleLogin = async () => {
-      try {
-        const result = await signInWithPopup(auth, provider);
-        const user = result.user;
-        
-        // Save user to Firestore 'users' collection
-        await setDoc(doc(db, "users", user.uid), {
-          name: user.displayName,
-          email: user.email,
-          lastLogin: serverTimestamp()
-        }, { merge: true });
-
-        closeAuthModal();
-      } catch (error) {
-        console.error("Login Failed", error);
-        alert("Login failed: " + error.message);
-      }
+    // Make logout function global so HTML button can trigger it
+    window.executeLogout = () => {
+      signOut(auth).then(() => {
+        console.log("Logged out successfully");
+      }).catch((error) => {
+        console.error("Logout Error", error);
+      });
     };
 
-    window.executeLogout = async () => {
-      await signOut(auth);
-      showSection('landing');
-    };
-
-    // LISTEN FOR LOGIN STATE CHANGES
+    // Auth State Observer - THIS FIXES THE RACE CONDITION
     onAuthStateChanged(auth, (user) => {
-      const navArea = document.getElementById('nav-user-area');
       if (user) {
-        currentUser = user;
-        let adminBtnHTML = '';
+        // 1. Force Modal Closed if it was open
+        authModal.classList.add('hidden');
         
-        // Check if the logged-in user is the Admin
-        if (user.email === ADMIN_EMAIL) {
-          adminBtnHTML = `<button onclick="loadAdminData()" class="bg-amber-600 hover:bg-amber-500 text-xs text-white font-bold px-4 py-2 rounded-xl shadow-lg flex items-center gap-1"><i data-lucide="shield-check" class="w-3 h-3"></i> Admin Panel</button>`;
-        }
+        // 2. Hide Hero Button, Show Order Form
+        getStartedBtn.classList.add('hidden');
+        orderSection.classList.remove('hidden');
 
-    navArea.innerHTML = `
+        // 3. Render Logged-In Navbar with Admin check & Logout Button
+        const adminBtnHTML = (user.email === 'YOUR_ADMIN_EMAIL@gmail.com') 
+          ? `<button onclick="window.location.href='/admin'" class="text-xs text-blue-400 border border-blue-500/30 px-3 py-1.5 rounded-lg hover:bg-blue-500/10">Admin</button>` 
+          : '';
+
+        navArea.innerHTML = `
           <div class="flex items-center gap-3">
             ${adminBtnHTML}
-            <button onclick="showSection('dashboard')" class="bg-slate-800 hover:bg-slate-700 text-xs text-white font-bold px-4 py-2 rounded-xl transition border border-slate-700 hidden sm:block">Dashboard</button>
+            <button onclick="console.log('Dashboard clicked')" class="bg-slate-800 hover:bg-slate-700 text-xs text-white font-bold px-4 py-2 rounded-xl transition border border-slate-700 hidden sm:block">Dashboard</button>
             <img src="${user.photoURL}" alt="Profile" class="w-9 h-9 rounded-full border-2 border-slate-800">
             <button onclick="executeLogout()" class="bg-red-500/10 hover:bg-red-500/20 text-red-500 text-xs font-bold px-3 py-2 rounded-xl transition border border-red-500/20 flex items-center gap-1.5 shadow-lg">
               <i data-lucide="log-out" class="w-3.5 h-3.5"></i> Logout
             </button>
           </div>
         `;
-        lucide.createIcons();
       } else {
-        currentUser = null;
-        navArea.innerHTML = `
-          <button onclick="openAuthModal()" class="bg-blue-600 hover:bg-blue-500 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition flex items-center gap-2 shadow-lg shadow-blue-600/20">
-            <span>Sign In / Register</span>
-            <i data-lucide="arrow-right" class="w-4 h-4"></i>
-          </button>
-        `;
+        // User is logged out
+        getStartedBtn.classList.remove('hidden');
+        orderSection.classList.add('hidden');
+        navArea.innerHTML = `<button onclick="showAuthModal()" class="text-sm font-semibold border border-slate-600 hover:border-white px-4 py-2 rounded-xl transition">Sign In / Register</button>`;
       }
     });
 
-    // ADMIN DASHBOARD DATA FETCHER
-    window.loadAdminData = async () => {
-      showSection('admin');
-      
-      // Fetch Users
-      try {
-        const usersSnap = await getDocs(collection(db, "users"));
-        let usersHTML = "";
-        usersSnap.forEach((doc) => {
-          const data = doc.data();
-          usersHTML += `<tr class="border-b border-slate-800/50 hover:bg-slate-800/20 transition"><td class="px-4 py-3 font-semibold text-white">${data.name || 'N/A'}</td><td class="px-4 py-3">${data.email || 'N/A'}</td></tr>`;
+    // Google Sign-In Trigger (Using Popup instead of Redirect)
+    googleSignInBtn.addEventListener('click', () => {
+      signInWithPopup(auth, provider)
+        .then((result) => {
+          authModal.classList.add('hidden'); // Close modal immediately on success
+        })
+        .catch((error) => {
+          console.error("Authentication Error:", error);
+          alert("Login failed. Please check console for details.");
         });
-        document.getElementById('admin-users-table').innerHTML = usersHTML || `<tr><td colspan="2" class="text-center py-4">No users found.</td></tr>`;
-      } catch (e) { document.getElementById('admin-users-table').innerHTML = `<tr><td colspan="2" class="text-red-400">Error loading users. (Check Firestore Security Rules)</td></tr>`; }
-
-      // Fetch Orders
-      try {
-        const q = query(collection(db, "orders"), orderBy("timestamp", "desc"));
-        const ordersSnap = await getDocs(q);
-        let ordersHTML = "";
-        ordersSnap.forEach((doc) => {
-          const data = doc.data();
-          ordersHTML += `<tr class="border-b border-slate-800/50 hover:bg-slate-800/20 transition"><td class="px-4 py-3 text-white">${data.clientName}</td><td class="px-4 py-3 text-blue-400 font-semibold">${data.projectTitle}</td><td class="px-4 py-3 text-emerald-400">₹${data.grandTotal}</td></tr>`;
-        });
-        document.getElementById('admin-orders-table').innerHTML = ordersHTML || `<tr><td colspan="3" class="text-center py-4">No orders found.</td></tr>`;
-      } catch (e) { document.getElementById('admin-orders-table').innerHTML = `<tr><td colspan="3" class="text-red-400">Error loading orders. (Check Firestore Security Rules)</td></tr>`; }
-    };
-
-    // UI CONTROL FUNCTIONS
-    window.openAuthModal = () => document.getElementById('auth-modal').classList.remove('hidden');
-    window.closeAuthModal = () => document.getElementById('auth-modal').classList.add('hidden');
-    window.showSection = (sectionId) => {
-      ['landing', 'dashboard', 'order-form', 'store', 'admin'].forEach(id => {
-        document.getElementById(`page-${id}`).classList.add('hidden');
-      });
-      document.getElementById(`page-${sectionId}`).classList.remove('hidden');
-      if (sectionId === 'order-form') {
-        document.getElementById('form-container').classList.remove('hidden');
-        document.getElementById('success-container').classList.add('hidden');
-      }
-    };
-
-    // DATA FOR DROPDOWN AND STORE
-    const componentData = {
-      "1. Microcontrollers & Development Boards": ["Arduino Uno", "Arduino Nano", "Arduino Mega 2560", "Arduino Leonardo", "ESP32 DevKit V1", "ESP8266 NodeMCU", "Raspberry Pi Pico"],
-      "2. Sensors": ["HC-SR04 Ultrasonic", "DHT11", "DHT22", "Soil Moisture", "MQ-2", "PIR Motion", "MPU6050", "LDR", "Water Level", "Flame Sensor", "Pulse Sensor"],
-      "3. Communication Modules": ["HC-05", "HC-06", "NRF24L01", "LoRa SX1278", "SIM800L", "RC522 RFID", "Ethernet Shield"],
-      "4. Displays": ["16x2 LCD", "20x4 LCD", "0.96 OLED", "TFT LCD", "7 Segment"],
-      "5. Motors & Drivers": ["TT DC Gear Motor", "SG90", "MG996R", "NEMA17", "L298N", "A4988"],
-      "6. Power & Relays": ["1-Channel Relay", "4-Channel Relay", "18650 Battery", "TP4056", "LM2596"],
-      "7. Passive & Structural": ["Resistor/Capacitor Kit", "LED Kit", "Breadboard", "Jumper Wires", "Robot Chassis"]
-    };
-
-    const categoryIcons = {
-      "1. Microcontrollers & Development Boards": "cpu", "2. Sensors": "radar",
-      "3. Communication Modules": "wifi", "4. Displays": "monitor",
-      "5. Motors & Drivers": "settings", "6. Power & Relays": "zap",
-      "7. Passive & Structural": "box"
-    };
-
-    // UI GENERATION LOGIC
-    function initDropdown() {
-      const listContainer = document.getElementById('components-list');
-      let html = '';
-      for (const [category, items] of Object.entries(componentData)) {
-        html += `<div class="comp-category mt-2 mb-1 pl-2 text-[10px] font-black uppercase text-slate-500 tracking-wider">${category}</div>`;
-        items.forEach(item => {
-          let price = 100; 
-          if(item.includes("Arduino Uno")) price = 350; if(item.includes("L298N")) price = 150;
-          if(item.includes("Ultrasonic")) price = 50; if(item.includes("ESP32")) price = 350;
-          if(item.includes("OLED")) price = 250;
-          html += `
-            <label class="comp-item flex items-center gap-3 cursor-pointer text-slate-300 hover:text-white hover:bg-slate-800 p-2.5 rounded-lg transition">
-              <input type="checkbox" value="${price}" data-name="${item.toUpperCase()}" onchange="updateQuotation()" class="comp-check rounded accent-blue-600 w-4 h-4 flex-shrink-0"> 
-              <span class="text-sm truncate">${item} (₹${price})</span>
-            </label>
-          `;
-        });
-      }
-      listContainer.innerHTML = html;
-    }
-
-    function initStore() {
-      const storeContainer = document.getElementById('store-grid-container');
-      let html = '';
-      for (const [category, items] of Object.entries(componentData)) {
-        html += `<div class="mt-12 mb-6 border-b border-slate-800 pb-3 flex items-center gap-3"><i data-lucide="${categoryIcons[category]}" class="w-6 h-6 text-amber-500"></i><h3 class="text-xl font-bold text-white uppercase tracking-wider">${category.substring(3)}</h3></div><div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">`;
-        items.forEach(item => {
-          let price = 100; 
-          if(item.includes("Arduino Uno")) price = 350; if(item.includes("L298N")) price = 150;
-          if(item.includes("Ultrasonic")) price = 50; if(item.includes("ESP32")) price = 350;
-          html += `
-            <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 hover:border-amber-500/40 transition flex flex-col shadow-lg group">
-              <div class="h-20 bg-slate-950 rounded-lg mb-3 flex items-center justify-center border border-slate-800/50 group-hover:scale-105 transition-transform">
-                <i data-lucide="${categoryIcons[category]}" class="w-8 h-8 text-slate-500 group-hover:text-amber-500/80 transition-colors"></i>
-              </div>
-              <h4 class="text-sm font-bold text-white mb-1 truncate">${item}</h4>
-              <p class="text-slate-400 text-[10px] mb-3 flex-grow">Standard component.</p>
-              <div class="flex items-center justify-between mt-auto pt-3 border-t border-slate-800"><span class="text-md font-extrabold text-white">₹${price}</span><button class="px-3 py-1.5 bg-slate-800 hover:bg-amber-600 text-slate-300 hover:text-white text-[10px] font-bold rounded-lg transition">Buy</button></div>
-            </div>`;
-        });
-        html += `</div>`;
-      }
-      storeContainer.innerHTML = html;
-    }
-
-    // FORM LOGIC
-    const dropdownBtn = document.getElementById('dropdown-btn');
-    const menu = document.getElementById('components-menu');
-    dropdownBtn.addEventListener('click', (e) => { menu.classList.toggle('hidden'); e.stopPropagation(); });
-    menu.addEventListener('click', (e) => e.stopPropagation());
-    document.addEventListener('click', () => { if (!menu.classList.contains('hidden')) menu.classList.add('hidden'); });
-
-    document.getElementById('component-search').addEventListener('keyup', function() {
-      let filter = this.value.toLowerCase();
-      document.querySelectorAll('.comp-item').forEach(label => {
-        label.style.display = (label.textContent || label.innerText).toLowerCase().indexOf(filter) > -1 ? "" : "none";
-      });
     });
 
-    window.updateQuotation = () => {
-      let compTotal = 0; let count = 0;
-      document.querySelectorAll('.comp-check:checked').forEach(cb => { compTotal += parseInt(cb.value); count++; });
-      compTotal += (parseInt(document.getElementById('custom-comp-cost').value) || 0);
+    // Handle Order Submission to Firestore Database
+    submitOrderBtn.addEventListener('click', async () => {
+      if (!auth.currentUser) return alert("Please log in first!");
+
+      const projectTitle = document.getElementById('projectTitle').value;
+      const compCost = parseFloat(document.getElementById('componentCost').value) || 0;
+      const instructions = document.getElementById('instructions').value;
       
-      const makingCharge = Math.round(compTotal * 0.35);
-      const grandTotal = compTotal + makingCharge;
+      if (!projectTitle || compCost <= 0) {
+        return alert("Please enter a project title and component cost.");
+      }
 
-      document.getElementById('txt-comp-cost').innerText = `₹${compTotal}`;
-      document.getElementById('txt-making-cost').innerText = `₹${makingCharge}`;
-      document.getElementById('quotation-price').innerText = `₹${grandTotal}`;
+      // Change button state to show it is processing
+      const originalBtnText = submitOrderBtn.innerHTML;
+      submitOrderBtn.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> Saving to Database...`;
+      submitOrderBtn.disabled = true;
 
-      const ddText = document.getElementById('dropdown-text');
-      if (count > 0) { ddText.innerText = `${count} component(s) selected`; ddText.classList.add('text-white'); ddText.classList.remove('text-slate-400'); } 
-      else { ddText.innerText = 'Select components...'; ddText.classList.remove('text-white'); ddText.classList.add('text-slate-400'); }
-    };
-
-    // SUBMIT ORDER TO FIREBASE & WHATSAPP
-    window.handleOrderSubmit = async (e) => {
-      e.preventDefault();
-      if (!currentUser) { alert("Please Sign In to submit an order."); openAuthModal(); return; }
-
-      const title = document.getElementById('proj-title').value;
-      const notes = document.getElementById('proj-notes').value || "No additional notes.";
-      
-      // Calculate Totals
-      let compTotal = 0; 
-      let componentListString = "";
-      document.querySelectorAll('.comp-check:checked').forEach(cb => { 
-        compTotal += parseInt(cb.value); 
-        componentListString += `${cb.getAttribute('data-name')} (₹${cb.value}), `;
-      });
-      const customCost = parseInt(document.getElementById('custom-comp-cost').value) || 0;
-      compTotal += customCost;
-      const makingCharge = Math.round(compTotal * 0.35);
-      const grandTotalVal = compTotal + makingCharge;
-
-      // 1. Write Order to Firestore Database
-      const btnText = document.getElementById('btn-submit-text');
-      btnText.innerText = "Saving to Database...";
       try {
+        // Save to Firestore
         await addDoc(collection(db, "orders"), {
-          clientId: currentUser.uid,
-          clientName: currentUser.displayName,
-          clientEmail: currentUser.email,
-          projectTitle: title,
-          componentsTotal: compTotal,
-          makingCharges: makingCharge,
-          grandTotal: grandTotalVal,
-          items: componentListString,
-          notes: notes,
-          timestamp: serverTimestamp()
+          userId: auth.currentUser.uid,
+          userName: auth.currentUser.displayName,
+          userEmail: auth.currentUser.email,
+          projectTitle: projectTitle,
+          componentCost: compCost,
+          makingCharge: compCost * 0.35,
+          totalCost: compCost + (compCost * 0.35),
+          instructions: instructions,
+          timestamp: serverTimestamp(),
+          status: "Pending"
         });
-      } catch (err) {
-        console.error("Error saving to Firestore", err);
-        alert("Warning: Could not save to database, but PDF will still generate.");
+
+        alert("Order successfully saved to database!");
+        
+        // Optional: Redirect to WhatsApp
+        const waMessage = `Hello MD Creations!%0A%0A*New Order:* ${projectTitle}%0A*Component Cost:* ₹${compCost}%0A*Total Est:* ₹${compCost + (compCost * 0.35)}`;
+        window.open(`https://wa.me/91XXXXXXXXXX?text=${waMessage}`, '_blank');
+        
+        // Reset form
+        document.getElementById('projectTitle').value = '';
+        document.getElementById('componentCost').value = '';
+        document.getElementById('instructions').value = '';
+        calculateTotal();
+
+      } catch (error) {
+        console.error("Error saving order: ", error);
+        alert("Error saving order. Make sure Firestore is in Test Mode.");
+      } finally {
+        submitOrderBtn.innerHTML = originalBtnText;
+        submitOrderBtn.disabled = false;
+        lucide.createIcons();
       }
-
-      // 2. Generate PDF
-      const { jsPDF } = window.jspdf;
-      const doc = new jsPDF();
-      doc.setFillColor(0, 0, 0); doc.rect(0, 15, 95, 18, "F"); 
-      doc.setFont("helvetica", "bold"); doc.setFontSize(30); doc.setTextColor(255, 255, 255); doc.text("Invoice", 30, 28);
-      doc.setTextColor(135, 156, 137); doc.setFontSize(26); doc.text("MD CREATIONS", 115, 25);
-      doc.setTextColor(0, 0, 0); doc.setFont("helvetica", "normal"); doc.setFontSize(10); doc.text("& ARDUINO PROJECTS", 123, 31);
-      doc.setFont("helvetica", "bold"); doc.setFontSize(11); doc.text(`TO: ${title.toUpperCase()}`, 20, 55);
-      doc.text(`Date: ${new Date().toLocaleDateString()}`, 130, 55);
-      doc.setFillColor(0, 0, 0); doc.rect(20, 70, 170, 10, "F"); doc.setTextColor(255, 255, 255); doc.setFont("helvetica", "normal"); doc.text("DESCRIPTION", 35, 76.5); doc.text("PRICE", 100, 76.5); doc.text("QTY.", 145, 76.5); doc.text("AMOUNT", 168, 76.5);
-
-      doc.setTextColor(0, 0, 0);
-      const startY = 70; let y = 92; let count = 1;
-
-      document.querySelectorAll('.comp-check:checked').forEach((cb) => {
-        let name = `#${count}  ${cb.getAttribute('data-name').substring(0, 25)}`;
-        doc.setFont("times", "italic"); doc.setFontSize(11); doc.text(name, 22, y); doc.setFontSize(14); doc.text(cb.value, 103, y); doc.setFont("helvetica", "normal"); doc.setFontSize(10); doc.text("1", 148, y); doc.setFont("times", "italic"); doc.setFontSize(14); doc.text(cb.value, 175, y);
-        y += 18; count++; if(y > 250) { doc.addPage(); y = 30; } 
-      });
-
-      if(customCost > 0) {
-        doc.setFont("times", "italic"); doc.setFontSize(11); doc.text(`#${count}  CUSTOM COMPONENTS`, 22, y); doc.setFontSize(14); doc.text(customCost.toString(), 103, y); doc.setFont("helvetica", "normal"); doc.setFontSize(10); doc.text("1", 148, y); doc.setFont("times", "italic"); doc.setFontSize(14); doc.text(customCost.toString(), 175, y); y += 18;
-      }
-
-      const bottomY = y + 5; 
-      doc.setDrawColor(0, 0, 0); doc.setLineWidth(0.3); doc.line(20, startY, 20, bottomY + 30); doc.line(130, startY, 130, bottomY + 30); doc.line(160, startY, 160, bottomY + 30); doc.line(190, startY, 190, bottomY + 30); doc.line(90, startY, 90, bottomY); 
-      doc.setFont("helvetica", "normal"); doc.setFontSize(10); doc.text("Total", 142, bottomY - 3); doc.setFont("times", "italic"); doc.setFontSize(13); doc.text(compTotal.toString(), 175, bottomY - 3); doc.line(130, bottomY, 190, bottomY); 
-
-      let t2 = bottomY + 10; doc.setFont("helvetica", "bold"); doc.setFontSize(10); doc.text("Making Charges 35%", 92, t2 - 3); doc.setFont("helvetica", "normal"); doc.text("-", 148, t2 - 3); doc.setFont("times", "italic"); doc.setFontSize(13); doc.text(makingCharge.toString(), 175, t2 - 3); doc.line(90, t2, 190, t2); 
-      let t3 = t2 + 10; doc.setFont("helvetica", "bold"); doc.setFontSize(11); doc.text("Grand Total", 100, t3 - 3); doc.setFont("times", "italic"); doc.setFontSize(13); doc.text(`${grandTotalVal}/- ONLY`, 163, t3 - 3); doc.line(20, t3, 190, t3); 
-
-      doc.setFillColor(160, 165, 170); doc.rect(70, t3 + 15, 60, 25, "F"); doc.setTextColor(255, 255, 255); doc.setFont("helvetica", "bold"); doc.setFontSize(18); doc.text("MD", 92, t3 + 28); doc.setFontSize(9); doc.text("CREATIONS", 87, t3 + 34);
-
-      // 3. Send to WhatsApp
-      // ----------------------------------------------------------------------
-      // CHANGE THIS: Replace with your actual WhatsApp Business number (No '+' sign)
-      const yourWhatsAppNumber = "9130390404"; 
-      // ----------------------------------------------------------------------
-      
-      const waMessage = `*New Order: ${title.toUpperCase()}*%0AClient: ${currentUser.displayName}%0AComponents: ₹${compTotal}%0AMaking Charges: ₹${makingCharge}%0A*Grand Total: ₹${grandTotalVal}*%0A%0A*Notes:* ${notes}%0A%0A_PDF Invoice generated._`;
-      window.open(`https://wa.me/${yourWhatsAppNumber}?text=${waMessage}`, '_blank');
-
-      doc.save(`Invoice_${title.replace(/\s+/g, '_')}.pdf`);
-      
-      btnText.innerText = "Generate Exact Invoice";
-      document.getElementById('form-container').classList.add('hidden');
-      document.getElementById('success-container').classList.remove('hidden');
-    };
-
-    // Boot
-    initDropdown();
-    initStore();
-    lucide.createIcons();
+    });
   </script>
 </body>
 </html>
