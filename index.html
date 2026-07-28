@@ -5,28 +5,28 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>MD CREATIONS — Custom Engineering Portal</title>
 
-  <!-- Cache-Busting Favicon Link -->
   <link rel="icon" type="image/x-icon" href="favicon.ico?v=2">
-
-  <!-- Tailwind CSS & Lucide Icons -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
-  <!-- jsPDF for Instant Invoices -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+  <!-- FIREBASE COMPATIBILITY SCRIPTS (Fixes the crashing issue) -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
     body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #020617; }
-    
-    /* Custom Scrollbar */
     .custom-scrollbar::-webkit-scrollbar { width: 6px; }
     .custom-scrollbar::-webkit-scrollbar-track { background: #0f172a; border-radius: 8px; }
     .custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; border-radius: 8px; }
-    
     .hidden { display: none !important; }
   </style>
 </head>
 <body class="text-slate-100 min-h-screen flex flex-col justify-between selection:bg-blue-500 selection:text-white">
+
+  <!-- ERROR BANNER (Visible if JS crashes) -->
+  <div id="system-error" class="hidden w-full bg-red-600 text-white text-center py-2 text-sm font-bold z-50 sticky top-0"></div>
 
   <!-- NAVIGATION BAR -->
   <nav class="border-b border-slate-900 bg-slate-950/80 backdrop-blur sticky top-0 z-30">
@@ -35,7 +35,6 @@
         <img src="favicon.ico?v=2" alt="MD Creations" class="w-10 h-10 rounded-xl shadow-lg shadow-blue-500/20 object-cover" onerror="this.outerHTML='<div class=\\'w-10 h-10 bg-white rounded-xl flex items-center justify-center text-slate-900 font-black text-sm\\'>MD</div>'">
         <span class="font-extrabold text-xl tracking-tight text-white">MD CREATIONS</span>
       </div>
-      
       <div id="nav-user-area">
         <button onclick="openAuthModal()" class="bg-blue-600 hover:bg-blue-500 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition flex items-center gap-2 shadow-lg shadow-blue-600/20">
           <span>Sign In / Register</span>
@@ -45,7 +44,6 @@
     </div>
   </nav>
 
-  <!-- MAIN APP CONTAINER -->
   <main id="app-content" class="flex-grow">
     
     <!-- PAGE 1: LANDING PAGE -->
@@ -65,142 +63,94 @@
       </button>
     </section>
 
-    <!-- PAGE 2: CLIENT DASHBOARD -->
+    <!-- PAGE 2: DASHBOARD -->
     <section id="page-dashboard" class="hidden max-w-5xl mx-auto px-6 py-12">
       <div class="text-center mb-10">
         <h2 class="text-3xl font-extrabold text-white">Welcome to MD CREATIONS Hub</h2>
         <p class="mt-2 text-slate-400">Select a pathway below to build your custom project requirement or browse hardware.</p>
       </div>
-
       <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
         <div onclick="showSection('page-order-form')" class="group bg-slate-900 border border-slate-800 hover:border-blue-500/50 rounded-2xl p-8 transition cursor-pointer flex flex-col justify-between shadow-xl">
           <div>
-            <div class="w-14 h-14 bg-blue-600/10 border border-blue-500/20 rounded-2xl flex items-center justify-center text-blue-400 mb-6 group-hover:scale-105 transition-transform">
-              <i data-lucide="rocket" class="w-7 h-7"></i>
-            </div>
+            <div class="w-14 h-14 bg-blue-600/10 border border-blue-500/20 rounded-2xl flex items-center justify-center text-blue-400 mb-6 group-hover:scale-105 transition-transform"><i data-lucide="rocket" class="w-7 h-7"></i></div>
             <h3 class="text-2xl font-bold text-white mb-2 group-hover:text-blue-400 transition">Project Order Portal</h3>
             <p class="text-slate-400 text-sm leading-relaxed mb-6">Select hardware components, auto-calculate 35% making charges, pay securely, and save to database.</p>
           </div>
-          <div class="pt-4 border-t border-slate-800 flex items-center text-blue-400 font-semibold gap-2">
-            <span>Start New Order</span>
-            <i data-lucide="arrow-right" class="w-4 h-4"></i>
-          </div>
+          <div class="pt-4 border-t border-slate-800 flex items-center text-blue-400 font-semibold gap-2"><span>Start New Order</span><i data-lucide="arrow-right" class="w-4 h-4"></i></div>
         </div>
-
         <div onclick="showSection('page-store')" class="group bg-slate-900 border border-slate-800 hover:border-amber-500/50 rounded-2xl p-8 transition cursor-pointer flex flex-col justify-between shadow-xl">
           <div>
-            <div class="w-14 h-14 bg-amber-500/10 border border-amber-500/20 rounded-2xl flex items-center justify-center text-amber-400 mb-6 group-hover:scale-105 transition-transform">
-              <i data-lucide="cpu" class="w-7 h-7"></i>
-            </div>
+            <div class="w-14 h-14 bg-amber-500/10 border border-amber-500/20 rounded-2xl flex items-center justify-center text-amber-400 mb-6 group-hover:scale-105 transition-transform"><i data-lucide="cpu" class="w-7 h-7"></i></div>
             <h3 class="text-2xl font-bold text-white mb-2 group-hover:text-amber-400 transition">Electronics Store & Info Hub</h3>
             <p class="text-slate-400 text-sm leading-relaxed mb-6">Browse microcontrollers, sensors, and modules. View technical pinout specifications or purchase parts directly.</p>
           </div>
-          <div class="pt-4 border-t border-slate-800 flex items-center text-amber-400 font-semibold gap-2">
-            <span>Enter Storefront</span>
-            <i data-lucide="arrow-right" class="w-4 h-4"></i>
-          </div>
+          <div class="pt-4 border-t border-slate-800 flex items-center text-amber-400 font-semibold gap-2"><span>Enter Storefront</span><i data-lucide="arrow-right" class="w-4 h-4"></i></div>
         </div>
       </div>
     </section>
 
-    <!-- PAGE 3: DYNAMIC ORDER FORM -->
+    <!-- PAGE 3: ORDER FORM -->
     <section id="page-order-form" class="hidden max-w-3xl mx-auto px-6 py-8">
-      <button onclick="showSection('page-dashboard')" class="inline-flex items-center gap-2 text-slate-400 hover:text-white text-sm font-semibold mb-6 transition">
-        <i data-lucide="arrow-left" class="w-4 h-4"></i> Back to Hub
-      </button>
-
+      <button onclick="showSection('page-dashboard')" class="inline-flex items-center gap-2 text-slate-400 hover:text-white text-sm font-semibold mb-6 transition"><i data-lucide="arrow-left" class="w-4 h-4"></i> Back to Hub</button>
       <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 shadow-2xl">
         <h2 class="text-2xl font-bold text-white mb-2">Project Requirement Form</h2>
         <p class="text-slate-400 text-sm mb-6">Select components to build your itemized 35% making charge quotation.</p>
-
-        <form onsubmit="handleOrderSubmit(event)" class="space-y-5">
+        <div class="space-y-5">
           <div>
-            <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">Project Title</label>
-            <input id="proj-title" type="text" required placeholder="e.g., Autonomous Rover" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-blue-500" />
+            <label class="block text-xs font-bold uppercase text-slate-300 mb-2">Project Title</label>
+            <input id="proj-title" type="text" placeholder="e.g., Autonomous Rover" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-blue-500" />
           </div>
-
-          <!-- SEARCHABLE DROPDOWN -->
           <div class="relative">
-            <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">Select Hardware Components</label>
+            <label class="block text-xs font-bold uppercase text-slate-300 mb-2">Select Hardware Components</label>
             <button type="button" id="dropdown-btn" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm text-slate-400 focus:outline-none focus:border-blue-500 text-left flex justify-between items-center transition hover:border-slate-700">
-              <span id="dropdown-text">Click to browse and tick components...</span>
-              <i data-lucide="chevron-down" class="w-4 h-4"></i>
+              <span id="dropdown-text">Click to browse and tick components...</span><i data-lucide="chevron-down" class="w-4 h-4"></i>
             </button>
-            
             <div id="components-menu" class="hidden absolute z-20 w-full mt-2 bg-slate-900 border border-slate-700 rounded-xl shadow-2xl overflow-hidden flex flex-col h-80">
               <div class="p-3 bg-slate-950 border-b border-slate-800 sticky top-0 z-30">
-                <div class="relative">
-                  <i data-lucide="search" class="absolute left-3 top-2.5 w-4 h-4 text-slate-500"></i>
-                  <input type="text" id="component-search" placeholder="Search for components..." class="w-full bg-slate-900 border border-slate-700 rounded-lg pl-9 pr-4 py-2 text-sm text-white focus:outline-none focus:border-blue-500" />
-                </div>
+                <div class="relative"><i data-lucide="search" class="absolute left-3 top-2.5 w-4 h-4 text-slate-500"></i><input type="text" id="component-search" placeholder="Search for components..." class="w-full bg-slate-900 border border-slate-700 rounded-lg pl-9 pr-4 py-2 text-sm text-white focus:outline-none focus:border-blue-500" /></div>
               </div>
-              <div id="components-list" class="flex-grow overflow-y-auto custom-scrollbar p-2 space-y-1 pb-4">
-                <!-- Javascript will populate this list -->
-              </div>
+              <div id="components-list" class="flex-grow overflow-y-auto custom-scrollbar p-2 space-y-1 pb-4"></div>
             </div>
           </div>
-
           <div>
-            <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">Custom / Unlisted Components Cost (₹)</label>
+            <label class="block text-xs font-bold uppercase text-slate-300 mb-2">Custom Components Cost (₹)</label>
             <input id="custom-comp-cost" type="number" min="0" placeholder="e.g., 1000" oninput="updateQuotation()" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-blue-500" />
           </div>
-
           <div>
-            <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">Additional Settings or Changes</label>
-            <textarea id="proj-notes" rows="3" placeholder="Enter any specific wiring instructions, custom features, or additional modifications needed..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-blue-500 custom-scrollbar"></textarea>
+            <label class="block text-xs font-bold uppercase text-slate-300 mb-2">Additional Instructions</label>
+            <textarea id="proj-notes" rows="3" placeholder="Enter specific wiring instructions..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-blue-500 custom-scrollbar"></textarea>
           </div>
-
-          <!-- BREAKDOWN & QUOTATION CARD -->
           <div class="p-5 bg-blue-950/40 border border-blue-500/30 rounded-xl flex flex-col sm:flex-row justify-between items-center gap-4 mt-6">
-            <div class="space-y-1">
+            <div>
               <span class="text-[10px] uppercase font-bold text-blue-400 tracking-wider">Price Breakdown</span>
-              <div class="text-xs text-slate-300 space-y-0.5">
-                <p>Components Cost: <span id="txt-comp-cost" class="font-bold text-white">₹0</span></p>
-                <p>Making Charges (35%): <span id="txt-making-cost" class="font-bold text-emerald-400">₹0</span></p>
-              </div>
+              <div class="text-xs text-slate-300 space-y-0.5"><p>Components: <span id="txt-comp-cost" class="font-bold text-white">₹0</span></p><p>Making (35%): <span id="txt-making-cost" class="font-bold text-emerald-400">₹0</span></p></div>
               <p id="quotation-price" class="text-3xl font-extrabold text-white pt-1">₹0</p>
             </div>
-            <button id="submitOrderBtn" type="submit" class="w-full sm:w-auto bg-blue-600 hover:bg-blue-500 text-white font-bold px-6 py-3.5 rounded-xl transition shadow-lg shadow-blue-600/30 flex items-center justify-center gap-2">
-              <i data-lucide="save" class="w-4 h-4"></i>
-              <span>Save & Order via WhatsApp</span>
-            </button>
+            <button id="submitOrderBtn" class="w-full sm:w-auto bg-blue-600 hover:bg-blue-500 text-white font-bold px-6 py-3.5 rounded-xl transition flex items-center justify-center gap-2"><i data-lucide="save" class="w-4 h-4"></i><span>Save & Order</span></button>
           </div>
-        </form>
+        </div>
       </div>
     </section>
 
-    <!-- PAGE 4: ELECTRONICS STORE & INFO HUB -->
+    <!-- PAGE 4: STORE -->
     <section id="page-store" class="hidden max-w-6xl mx-auto px-6 py-8">
-      <button onclick="showSection('page-dashboard')" class="inline-flex items-center gap-2 text-slate-400 hover:text-white text-sm font-semibold mb-6 transition">
-        <i data-lucide="arrow-left" class="w-4 h-4"></i> Back to Hub
-      </button>
-
+      <button onclick="showSection('page-dashboard')" class="inline-flex items-center gap-2 text-slate-400 hover:text-white text-sm font-semibold mb-6 transition"><i data-lucide="arrow-left" class="w-4 h-4"></i> Back to Hub</button>
       <div class="mb-10 border-b border-slate-800 pb-6">
         <div class="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 mb-3">
           <h2 class="text-3xl font-extrabold text-white">Electronics Component Hub</h2>
-          <span class="inline-flex w-fit items-center gap-1.5 px-3 py-1 bg-amber-500/10 text-amber-400 border border-amber-500/20 rounded-full text-xs font-bold uppercase tracking-wider shadow-lg shadow-amber-500/10">
-            <i data-lucide="clock" class="w-3.5 h-3.5"></i> Coming Soon
-          </span>
+          <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-500/10 text-amber-400 border border-amber-500/20 rounded-full text-xs font-bold uppercase"><i data-lucide="clock" class="w-3.5 h-3.5"></i> Coming Soon</span>
         </div>
-        <p class="text-slate-400">Browse our comprehensive catalog of microcontrollers, sensors, and modules.</p>
       </div>
-
-      <!-- Store Grid Container -->
-      <div id="store-grid-container" class="opacity-80 pointer-events-none select-none">
-        <!-- Javascript will populate this grid -->
-      </div>
+      <div id="store-grid-container" class="opacity-80 pointer-events-none select-none"></div>
     </section>
   </main>
 
   <!-- AUTH MODAL -->
   <div id="auth-modal" class="hidden fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
     <div class="bg-slate-900 border border-slate-700 rounded-2xl max-w-md w-full p-6 relative shadow-2xl">
-      <button onclick="closeAuthModal()" class="absolute top-4 right-4 text-slate-500 hover:text-white transition">
-        <i data-lucide="x" class="w-5 h-5"></i>
-      </button>
+      <button onclick="closeAuthModal()" class="absolute top-4 right-4 text-slate-500 hover:text-white transition"><i data-lucide="x" class="w-5 h-5"></i></button>
       <div class="text-center mb-6">
-        <img src="favicon.ico?v=2" alt="MD Creations Logo" class="w-12 h-12 rounded-xl mx-auto mb-3 shadow-lg shadow-blue-500/20 object-cover" onerror="this.outerHTML='<div class=\\'w-12 h-12 bg-white rounded-xl mx-auto mb-3 flex items-center justify-center text-slate-900 font-black text-xl\\'>MD</div>'">
-        <h2 class="text-2xl font-bold text-white">Welcome to MD CREATIONS</h2>
+        <h2 class="text-2xl font-bold text-white">MD CREATIONS Login</h2>
         <p class="text-slate-400 text-sm mt-2">Sign in to access your dashboard.</p>
       </div>
       <button id="googleSignInBtn" class="w-full bg-white hover:bg-gray-100 text-slate-900 font-bold py-3 px-4 rounded-xl transition flex items-center justify-center gap-3">
@@ -210,10 +160,12 @@
     </div>
   </div>
 
-  <!-- COMPONENT DATA & UI SCRIPT -->
   <script>
-    // Navigation logic
-    function showSection(sectionId) {
+    // 1. Initialize Icons Safely
+    try { lucide.createIcons(); } catch(e) { console.warn("Lucide icons failed:", e); }
+
+    // 2. UI Functions
+    window.showSection = function(sectionId) {
       document.getElementById('page-landing').classList.add('hidden');
       document.getElementById('page-dashboard').classList.add('hidden');
       document.getElementById('page-order-form').classList.add('hidden');
@@ -221,11 +173,9 @@
       document.getElementById(sectionId).classList.remove('hidden');
       window.scrollTo(0,0);
     }
+    window.openAuthModal = function() { document.getElementById('auth-modal').classList.remove('hidden'); }
+    window.closeAuthModal = function() { document.getElementById('auth-modal').classList.add('hidden'); }
 
-    function openAuthModal() { document.getElementById('auth-modal').classList.remove('hidden'); }
-    function closeAuthModal() { document.getElementById('auth-modal').classList.add('hidden'); }
-
-    // Dropdown toggles & search
     document.getElementById('dropdown-btn').addEventListener('click', () => {
       document.getElementById('components-menu').classList.toggle('hidden');
     });
@@ -233,12 +183,11 @@
     document.getElementById('component-search').addEventListener('input', (e) => {
       const term = e.target.value.toLowerCase();
       document.querySelectorAll('.comp-item').forEach(item => {
-        const text = item.innerText.toLowerCase();
-        item.style.display = text.includes(term) ? 'flex' : 'none';
+        item.style.display = item.innerText.toLowerCase().includes(term) ? 'flex' : 'none';
       });
     });
 
-    // FULL COMPONENT DATASET[span_0](start_span)[span_0](end_span)
+    // 3. Component Data
     const componentData = {
       "1. Microcontrollers & Development Boards": ["Arduino Uno", "Arduino Nano", "Arduino Mega 2560", "Arduino Leonardo", "Arduino Pro Mini", "ESP32 DevKit V1", "ESP8266 NodeMCU", "ESP-01", "Raspberry Pi Pico", "STM32 Blue Pill", "Teensy"],
       "2. Sensors": ["HC-SR04 Ultrasonic", "VL53L0X", "DHT11", "DHT22", "DS18B20", "LM35", "Thermistor", "Soil Moisture", "MQ-2", "MQ-3", "MQ-4", "MQ-5", "MQ-6", "MQ-7", "MQ-8", "MQ-9", "MQ-135", "PIR Motion", "RCWL-0516 Radar", "ADXL345", "MPU6050", "LDR", "BH1750", "TSL2561", "Rain Sensor", "Water Level", "Water Flow", "Leak Sensor", "BMP180", "BMP280", "BME280", "Hall Effect", "Reed Switch", "Flame Sensor", "Smoke Sensor", "TTP223", "Fingerprint Sensor", "MAX30100", "MAX30102", "Pulse Sensor", "ECG Sensor", "NEO-6M GPS", "TCS3200 Color Sensor", "OV2640 Camera"],
@@ -263,19 +212,36 @@
       "21. Advanced Modules": ["ESP32-CAM", "Voice Recognition", "Load Cell + HX711", "pH Sensor", "EC Sensor", "TDS Sensor", "Turbidity Sensor", "Vibration Sensor", "Flex Sensor", "Strain Gauge", "INA219", "ACS712", "Voltage Sensor Module"]
     };
 
-    const categoryIcons = {
-      "1. Microcontrollers & Development Boards": "cpu", "2. Sensors": "radar", "3. Communication Modules": "wifi",
-      "4. Displays": "monitor", "5. Motors & Actuators": "settings", "6. Motor Drivers": "zap",
-      "7. Relays": "toggle-right", "8. Power": "battery", "9. Passive Components": "minus",
-      "10. Semiconductors": "git-commit", "11. Transistors & MOSFETs": "git-merge", "12. Audio": "volume-2",
-      "13. Inputs": "mouse-pointer-click", "14. Timing": "clock", "15. Storage": "database",
-      "16. Robotics": "bot", "17. PCB & Wiring": "share-2", "18. Test Equipment": "activity",
-      "19. Soldering": "pen-tool", "20. IoT Platforms": "cloud", "21. Advanced Modules": "layers"
-    };
-
-    // Calculate approximate component costs for demo purposes
     function getEstimatedPrice(item) {
-      if(item.includes("Arduino Uno")) return 350;
-      if(item.includes("ESP32")) return 450;
-      if(item.includes("ESP8266")) return 280;
-     
+      if(item.includes("Uno")) return 350; if(item.includes("ESP32")) return 450;
+      if(item.includes("L298N")) return 150; if(item.includes("OLED")) return 250;
+      return 100;
+    }
+
+    try {
+      const listContainer = document.getElementById('components-list');
+      const storeContainer = document.getElementById('store-grid-container');
+      let dropdownHtml = '', storeHtml = '';
+
+      for (const [category, items] of Object.entries(componentData)) {
+        dropdownHtml += `<div class="mt-3 mb-1 pl-2 text-[10px] font-black uppercase text-blue-500">${category}</div>`;
+        storeHtml += `<div class="mt-8 mb-4 border-b border-slate-800 pb-2 flex items-center gap-2"><h3 class="text-xl font-bold text-white">${category}</h3></div><div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">`;
+        
+        items.forEach(item => {
+          let price = getEstimatedPrice(item);
+          dropdownHtml += `<label class="comp-item flex items-center gap-3 cursor-pointer text-slate-300 hover:bg-slate-800 p-2.5 rounded-lg"><input type="checkbox" value="${price}" data-name="${item}" onchange="updateQuotation()" class="comp-check rounded accent-blue-600 w-4 h-4"> <span class="text-sm truncate">${item}</span></label>`;
+          storeHtml += `<div class="bg-slate-900 border border-slate-800 rounded-xl p-4 relative overflow-hidden"><div class="absolute top-2 right-2 bg-amber-500/20 text-amber-400 text-[9px] font-black px-2 py-0.5 rounded uppercase border border-amber-500/30">Coming Soon</div><div class="font-semibold text-slate-200 text-sm mt-3 mb-1">${item}</div></div>`;
+        });
+        storeHtml += `</div>`;
+      }
+      listContainer.innerHTML = dropdownHtml;
+      storeContainer.innerHTML = storeHtml;
+    } catch(e) {
+      document.getElementById('system-error').innerText = "UI Loading Error: " + e.message;
+      document.getElementById('system-error').classList.remove('hidden');
+    }
+
+    window.finalComponentCost = 0;
+    window.updateQuotation = function() {
+      const customCost = parseFloat(document.getElementById('custom-comp-cost').value) || 0;
+      let chec
