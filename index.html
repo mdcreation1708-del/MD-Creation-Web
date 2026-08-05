@@ -106,14 +106,27 @@
       <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 shadow-2xl">
         <h2 class="text-2xl font-bold text-white mb-2">Project Requirement Form</h2>
         <p class="text-slate-400 text-sm mb-6">Select components to build your itemized 35% making charge quotation.</p>
+        
         <div class="space-y-5">
+          <!-- NEW: Name and Contact Fields -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div>
+              <label class="block text-xs font-bold uppercase text-slate-300 mb-2">Your Name <span class="text-red-500">*</span></label>
+              <input id="client-name" type="text" placeholder="e.g., John Doe" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-blue-500" />
+            </div>
+            <div>
+              <label class="block text-xs font-bold uppercase text-slate-300 mb-2">Contact No <span class="text-red-500">*</span></label>
+              <input id="client-phone" type="tel" placeholder="e.g., +91 9876543210" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-blue-500" />
+            </div>
+          </div>
+
           <div>
-            <label class="block text-xs font-bold uppercase text-slate-300 mb-2">Project Title</label>
+            <label class="block text-xs font-bold uppercase text-slate-300 mb-2">Project Title <span class="text-red-500">*</span></label>
             <input id="proj-title" type="text" placeholder="e.g., Autonomous Rover" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-blue-500" />
           </div>
           
           <div class="relative">
-            <label class="block text-xs font-bold uppercase text-slate-300 mb-2">Select Hardware Components</label>
+            <label class="block text-xs font-bold uppercase text-slate-300 mb-2">Select Hardware Components <span class="text-red-500">*</span></label>
             <button type="button" id="dropdown-btn" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm text-slate-400 focus:outline-none focus:border-blue-500 text-left flex justify-between items-center transition hover:border-slate-700">
               <span id="dropdown-text">Tap to browse and tick components...</span><i data-lucide="chevron-down" class="w-4 h-4"></i>
             </button>
@@ -295,8 +308,8 @@
       document.getElementById('quotation-price').innerText = `₹${(compCost + makingCharge).toFixed(0)}`;
     }
 
-    // PDF INVOICE LOGIC
-    function generateProfessionalPDF(projectTitle, tickedParts, customCost, compCost, makingCharge, totalCost, userName, userEmail) {
+    // PDF INVOICE LOGIC (Updated to include Phone Number)
+    function generateProfessionalPDF(projectTitle, tickedParts, customCost, compCost, makingCharge, totalCost, clientName, userEmail, clientPhone) {
       const { jsPDF } = window.jspdf;
       const doc = new jsPDF();
       doc.setFont("helvetica", "bold"); doc.setFontSize(22); doc.setTextColor(37, 99, 235); doc.text("MD CREATIONS", 20, 20);
@@ -305,7 +318,9 @@
       doc.setFontSize(10); const invoiceNo = "MDC-" + Math.floor(Math.random() * 90000 + 10000);
       doc.text(`Invoice No: ${invoiceNo}`, 140, 28); doc.text(`Date: ${new Date().toLocaleDateString()}`, 140, 33);
       doc.setDrawColor(226, 232, 240); doc.line(20, 42, 190, 42);
-      doc.setFont("helvetica", "bold"); doc.text("Prepared For:", 20, 52); doc.setFont("helvetica", "normal"); doc.text(userName, 20, 58); doc.text(userEmail, 20, 63);
+      doc.setFont("helvetica", "bold"); doc.text("Prepared For:", 20, 52); doc.setFont("helvetica", "normal"); 
+      doc.text(clientName, 20, 58); doc.text(userEmail, 20, 63); 
+      if(clientPhone) { doc.text(`Ph: ${clientPhone}`, 20, 68); }
       doc.setFont("helvetica", "bold"); doc.text("Project Title:", 140, 52); doc.setFont("helvetica", "normal"); doc.text(doc.splitTextToSize(projectTitle, 50), 140, 58);
       doc.setFillColor(241, 245, 249); doc.rect(20, 75, 170, 10, "F");
       doc.setFont("helvetica", "bold"); doc.text("Description", 25, 82); doc.text("Amount (INR)", 160, 82);
@@ -341,7 +356,7 @@
       const db = firebase.firestore();
       const provider = new firebase.auth.GoogleAuthProvider();
 
-      // ADMIN DATA FETCHER
+      // ADMIN DATA FETCHER (Updated to show Phone number)
       window.loadAdminData = async function() {
         try {
           const tableBody = document.getElementById('admin-orders-table');
@@ -365,7 +380,7 @@
                 <td class="px-6 py-4 whitespace-nowrap text-slate-400">${date}</td>
                 <td class="px-6 py-4">
                   <div class="font-bold text-white">${data.userName || 'Client'}</div>
-                  <div class="text-xs text-slate-500">${data.userEmail || 'No email'}</div>
+                  <div class="text-xs text-slate-500">${data.userEmail || 'No email'} | ${data.userPhone || 'No phone'}</div>
                 </td>
                 <td class="px-6 py-4 font-medium text-blue-400">${data.projectTitle}</td>
                 <td class="px-6 py-4 font-bold text-emerald-400 text-right">₹${cost.toFixed(0)}</td>
@@ -387,6 +402,10 @@
           closeAuthModal();
           if(!document.getElementById('page-landing').classList.contains('hidden')) showSection('page-dashboard');
           
+          // Auto-fill Name field if empty
+          const nameInput = document.getElementById('client-name');
+          if(!nameInput.value) nameInput.value = user.displayName || '';
+
           let adminButtonHtml = '';
           if (user.email === ADMIN_EMAIL) {
             adminButtonHtml = `<button onclick="showSection('page-admin'); loadAdminData();" class="bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-xs font-bold px-3 py-2 rounded-xl flex items-center gap-1.5 transition"><i data-lucide="shield-check" class="w-4 h-4"></i> Admin Hub</button>`;
@@ -411,8 +430,15 @@
       document.getElementById('submitOrderBtn').addEventListener('click', async (e) => {
         e.preventDefault();
         if (!auth.currentUser) return alert("Log in first!");
-        const title = document.getElementById('proj-title').value;
-        if (!title || window.finalComponentCost <= 0) return alert("Enter title and pick parts.");
+        
+        const clientName = document.getElementById('client-name').value.trim();
+        const clientPhone = document.getElementById('client-phone').value.trim();
+        const title = document.getElementById('proj-title').value.trim();
+        
+        // Strict Validation added here
+        if (!clientName || !clientPhone || !title || window.finalComponentCost <= 0) {
+          return alert("Please fill in your Name, Contact No, Project Title, and select parts before submitting.");
+        }
         
         document.getElementById('submitOrderBtn').innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> Saving...`;
         lucide.createIcons();
@@ -424,18 +450,25 @@
         let tickedParts = [];
         document.querySelectorAll('.comp-check:checked').forEach(cb => { tickedParts.push(cb.getAttribute('data-name')); });
         
-        const userName = auth.currentUser.displayName || "Client";
         const userEmail = auth.currentUser.email || "";
 
-        try { generateProfessionalPDF(title, tickedParts, customCost, compCost, makingCharge, totalCost, userName, userEmail); } catch(pdfError) {}
+        try { generateProfessionalPDF(title, tickedParts, customCost, compCost, makingCharge, totalCost, clientName, userEmail, clientPhone); } catch(pdfError) {}
         
         try {
           await db.collection("orders").add({
-            userId: auth.currentUser.uid, userName: userName, userEmail: userEmail,
-            projectTitle: title, totalCost: totalCost, timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            userId: auth.currentUser.uid, 
+            userName: clientName, 
+            userEmail: userEmail,
+            userPhone: clientPhone,
+            projectTitle: title, 
+            totalCost: totalCost, 
+            timestamp: firebase.firestore.FieldValue.serverTimestamp()
           });
-          window.open(`https://wa.me/9130390404?text=Hello MD Creations!%0A*New Order:* ${title}%0A*Total Est:* ₹${totalCost}`, '_blank');
           
+          window.open(`https://wa.me/91XXXXXXXXXX?text=Hello MD Creations!%0A*New Order:* ${title}%0A*Name:* ${clientName}%0A*Phone:* ${clientPhone}%0A*Total Est:* ₹${totalCost}`, '_blank');
+          
+          // Clear Form
+          document.getElementById('client-phone').value = '';
           document.getElementById('proj-title').value = '';
           document.getElementById('custom-comp-cost').value = '';
           document.querySelectorAll('.comp-check').forEach(cb => cb.checked = false);
