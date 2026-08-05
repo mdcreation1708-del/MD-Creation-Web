@@ -8,6 +8,9 @@
   <link rel="icon" type="image/x-icon" href="favicon.ico?v=2">
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
+  
+  <!-- PDF GENERATOR SCRIPT -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
   <!-- FIREBASE COMPATIBILITY SCRIPTS -->
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
@@ -20,7 +23,6 @@
     body { 
       font-family: 'Plus Jakarta Sans', sans-serif; 
       background-color: #020617; 
-      /* MOBILE TOUCH FIXES */
       -webkit-tap-highlight-color: transparent;
       touch-action: manipulation;
     }
@@ -79,23 +81,19 @@
         <p class="mt-2 text-slate-400">Select a pathway below to build your custom project requirement or browse hardware.</p>
       </div>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-        
-        <!-- Order Portal Card (Added role="button" for touchscreens) -->
         <div onclick="showSection('page-order-form')" role="button" tabindex="0" class="group bg-slate-900 border border-slate-800 hover:border-blue-500/50 rounded-2xl p-8 transition cursor-pointer flex flex-col justify-between shadow-xl">
           <div>
             <div class="w-14 h-14 bg-blue-600/10 border border-blue-500/20 rounded-2xl flex items-center justify-center text-blue-400 mb-6 group-hover:scale-105 transition-transform"><i data-lucide="rocket" class="w-7 h-7"></i></div>
             <h3 class="text-2xl font-bold text-white mb-2 group-hover:text-blue-400 transition">Project Order Portal</h3>
-            <p class="text-slate-400 text-sm leading-relaxed mb-6">Select hardware components, auto-calculate 35% making charges, pay securely, and save to database.</p>
+            <p class="text-slate-400 text-sm leading-relaxed mb-6">Select hardware components, auto-calculate 35% making charges, generate an invoice, and submit.</p>
           </div>
           <div class="pt-4 border-t border-slate-800 flex items-center text-blue-400 font-semibold gap-2"><span>Start New Order</span><i data-lucide="arrow-right" class="w-4 h-4"></i></div>
         </div>
-        
-        <!-- Store Hub Card (Added role="button" for touchscreens) -->
         <div onclick="showSection('page-store')" role="button" tabindex="0" class="group bg-slate-900 border border-slate-800 hover:border-amber-500/50 rounded-2xl p-8 transition cursor-pointer flex flex-col justify-between shadow-xl">
           <div>
             <div class="w-14 h-14 bg-amber-500/10 border border-amber-500/20 rounded-2xl flex items-center justify-center text-amber-400 mb-6 group-hover:scale-105 transition-transform"><i data-lucide="cpu" class="w-7 h-7"></i></div>
             <h3 class="text-2xl font-bold text-white mb-2 group-hover:text-amber-400 transition">Electronics Store & Info Hub</h3>
-            <p class="text-slate-400 text-sm leading-relaxed mb-6">Browse microcontrollers, sensors, and modules. View technical pinout specifications or purchase parts directly.</p>
+            <p class="text-slate-400 text-sm leading-relaxed mb-6">Browse microcontrollers, sensors, and modules. View technical specifications.</p>
           </div>
           <div class="pt-4 border-t border-slate-800 flex items-center text-amber-400 font-semibold gap-2"><span>Enter Storefront</span><i data-lucide="arrow-right" class="w-4 h-4"></i></div>
         </div>
@@ -119,8 +117,6 @@
             <button type="button" id="dropdown-btn" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm text-slate-400 focus:outline-none focus:border-blue-500 text-left flex justify-between items-center transition hover:border-slate-700">
               <span id="dropdown-text">Tap to browse and tick components...</span><i data-lucide="chevron-down" class="w-4 h-4"></i>
             </button>
-            
-            <!-- Z-index fix for mobile dropdown -->
             <div id="components-menu" class="hidden absolute z-50 w-full mt-2 bg-slate-900 border border-slate-700 rounded-xl shadow-2xl overflow-hidden flex flex-col h-80">
               <div class="p-3 bg-slate-950 border-b border-slate-800 sticky top-0 z-50">
                 <div class="relative"><i data-lucide="search" class="absolute left-3 top-2.5 w-4 h-4 text-slate-500"></i><input type="text" id="component-search" placeholder="Search for components..." class="w-full bg-slate-900 border border-slate-700 rounded-lg pl-9 pr-4 py-2 text-sm text-white focus:outline-none focus:border-blue-500" /></div>
@@ -144,7 +140,7 @@
               <div class="text-xs text-slate-300 space-y-0.5"><p>Components: <span id="txt-comp-cost" class="font-bold text-white">₹0</span></p><p>Making (35%): <span id="txt-making-cost" class="font-bold text-emerald-400">₹0</span></p></div>
               <p id="quotation-price" class="text-3xl font-extrabold text-white pt-1">₹0</p>
             </div>
-            <button id="submitOrderBtn" class="w-full sm:w-auto bg-blue-600 hover:bg-blue-500 text-white font-bold px-6 py-3.5 rounded-xl transition flex items-center justify-center gap-2"><i data-lucide="save" class="w-4 h-4"></i><span>Save & Order</span></button>
+            <button id="submitOrderBtn" class="w-full sm:w-auto bg-blue-600 hover:bg-blue-500 text-white font-bold px-6 py-3.5 rounded-xl transition flex items-center justify-center gap-2"><i data-lucide="download" class="w-4 h-4"></i><span>Save & Download Invoice</span></button>
           </div>
         </div>
       </div>
@@ -154,15 +150,56 @@
     <section id="page-store" class="hidden max-w-6xl mx-auto px-6 py-8">
       <button onclick="showSection('page-dashboard')" class="inline-flex items-center gap-2 text-slate-400 hover:text-white text-sm font-semibold mb-6 transition"><i data-lucide="arrow-left" class="w-4 h-4"></i> Back to Hub</button>
       <div class="mb-10 border-b border-slate-800 pb-6">
-        <div class="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 mb-3">
-          <h2 class="text-3xl font-extrabold text-white">Electronics Component Hub</h2>
-          <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-500/10 text-amber-400 border border-amber-500/20 rounded-full text-xs font-bold uppercase"><i data-lucide="clock" class="w-3.5 h-3.5"></i> Coming Soon</span>
-        </div>
+        <h2 class="text-3xl font-extrabold text-white mb-3">Electronics Component Hub</h2>
       </div>
-      
-      <!-- REMOVED pointer-events-none so users can tap items on mobile -->
       <div id="store-grid-container" class="opacity-80 select-none"></div>
     </section>
+
+    <!-- PAGE 5: ADMIN DASHBOARD -->
+    <section id="page-admin" class="hidden max-w-6xl mx-auto px-6 py-8">
+      <button onclick="showSection('page-dashboard')" class="inline-flex items-center gap-2 text-slate-400 hover:text-white text-sm font-semibold mb-6 transition"><i data-lucide="arrow-left" class="w-4 h-4"></i> Back to Hub</button>
+      
+      <div class="mb-8 border-b border-slate-800 pb-6 flex flex-col sm:flex-row sm:justify-between sm:items-end gap-4">
+        <div>
+          <h2 class="text-3xl font-extrabold text-white flex items-center gap-3"><i data-lucide="shield-check" class="text-emerald-500 w-8 h-8"></i> Admin Dashboard</h2>
+          <p class="text-slate-400 mt-2">Manage customer orders and monitor platform activity.</p>
+        </div>
+        <button onclick="loadAdminData()" class="bg-slate-800 hover:bg-slate-700 text-white px-4 py-2.5 rounded-xl text-sm font-bold flex items-center justify-center gap-2 transition w-full sm:w-auto"><i data-lucide="refresh-cw" class="w-4 h-4"></i> Refresh Data</button>
+      </div>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl">
+          <div class="flex items-center gap-3 text-slate-400 text-xs font-bold uppercase mb-2"><i data-lucide="shopping-cart" class="w-4 h-4 text-blue-400"></i> Total Orders</div>
+          <div id="admin-total-orders" class="text-4xl font-black text-white">0</div>
+        </div>
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl">
+          <div class="flex items-center gap-3 text-slate-400 text-xs font-bold uppercase mb-2"><i data-lucide="banknote" class="w-4 h-4 text-emerald-400"></i> Estimated Revenue</div>
+          <div id="admin-total-revenue" class="text-4xl font-black text-emerald-400">₹0</div>
+        </div>
+      </div>
+
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-xl">
+        <div class="p-5 border-b border-slate-800 bg-slate-950/50">
+          <h3 class="text-lg font-bold text-white">Recent Client Orders</h3>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-sm text-slate-300">
+            <thead class="text-xs text-slate-400 uppercase bg-slate-950">
+              <tr>
+                <th class="px-6 py-4 font-bold">Date</th>
+                <th class="px-6 py-4 font-bold">Client Details</th>
+                <th class="px-6 py-4 font-bold">Project Title</th>
+                <th class="px-6 py-4 font-bold text-right">Total Quoted</th>
+              </tr>
+            </thead>
+            <tbody id="admin-orders-table" class="divide-y divide-slate-800/50">
+              <!-- Orders injected here -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
   </main>
 
   <!-- AUTH MODAL -->
@@ -181,15 +218,14 @@
   </div>
 
   <script>
-    // 1. Initialize Icons Safely
     try { lucide.createIcons(); } catch(e) { console.warn("Lucide icons failed:", e); }
 
-    // 2. UI Functions
     window.showSection = function(sectionId) {
       document.getElementById('page-landing').classList.add('hidden');
       document.getElementById('page-dashboard').classList.add('hidden');
       document.getElementById('page-order-form').classList.add('hidden');
       document.getElementById('page-store').classList.add('hidden');
+      document.getElementById('page-admin').classList.add('hidden');
       document.getElementById(sectionId).classList.remove('hidden');
       window.scrollTo(0,0);
     }
@@ -207,34 +243,16 @@
       });
     });
 
-    // Mobile touch alert for store items
-    window.storeAlert = function() {
-      alert("This component will be available for direct purchase soon!");
-    }
+    window.storeAlert = function() { alert("This component will be available for direct purchase soon!"); }
 
-    // 3. Component Data
     const componentData = {
-      "1. Microcontrollers & Development Boards": ["Arduino Uno", "Arduino Nano", "Arduino Mega 2560", "Arduino Leonardo", "Arduino Pro Mini", "ESP32 DevKit V1", "ESP8266 NodeMCU", "ESP-01", "Raspberry Pi Pico", "STM32 Blue Pill", "Teensy"],
-      "2. Sensors": ["HC-SR04 Ultrasonic", "VL53L0X", "DHT11", "DHT22", "DS18B20", "LM35", "Thermistor", "Soil Moisture", "MQ-2", "MQ-3", "MQ-4", "MQ-5", "MQ-6", "MQ-7", "MQ-8", "MQ-9", "MQ-135", "PIR Motion", "RCWL-0516 Radar", "ADXL345", "MPU6050", "LDR", "BH1750", "TSL2561", "Rain Sensor", "Water Level", "Water Flow", "Leak Sensor", "BMP180", "BMP280", "BME280", "Hall Effect", "Reed Switch", "Flame Sensor", "Smoke Sensor", "TTP223", "Fingerprint Sensor", "MAX30100", "MAX30102", "Pulse Sensor", "ECG Sensor", "NEO-6M GPS", "TCS3200 Color Sensor", "OV2640 Camera"],
-      "3. Communication Modules": ["HC-05", "HC-06", "HM-10 BLE", "ESP8266 Wi-Fi", "ESP32 Wi-Fi/Bluetooth", "NRF24L01", "LoRa SX1278", "XBee ZigBee", "SIM800L", "SIM900", "SIM7600", "RC522 RFID", "NFC Module", "Ethernet Shield", "CAN Bus", "RS485"],
-      "4. Displays": ["16x2 LCD", "20x4 LCD", "0.96 OLED", "1.3 OLED", "TFT LCD", "Nextion Display", "7 Segment", "8x8 LED Matrix"],
-      "5. Motors & Actuators": ["TT DC Gear Motor", "High Torque DC Motor", "SG90", "MG90S", "MG996R", "28BYJ-48", "NEMA17", "NEMA23", "Linear Actuator", "Solenoid Lock", "Solenoid Valve", "Mini Water Pump", "Peristaltic Pump", "Air Pump"],
-      "6. Motor Drivers": ["L293D", "L298N", "TB6612FNG", "BTS7960", "A4988", "DRV8825", "ULN2003"],
-      "7. Relays": ["1-Channel", "2-Channel", "4-Channel", "8-Channel", "Solid State Relay"],
-      "8. Power": ["18650 Battery", "LiPo Battery", "TP4056", "BMS", "LM2596", "XL6009", "AMS1117", "7805 Regulator", "USB Power Module"],
-      "9. Passive Components": ["Resistors", "Capacitors", "Inductors", "Potentiometers", "Trimmers"],
-      "10. Semiconductors": ["Diodes", "Zener Diodes", "Schottky Diodes", "Bridge Rectifier", "LEDs", "RGB LEDs", "IR LED", "Photodiode", "Phototransistor"],
-      "11. Transistors & MOSFETs": ["BC547", "BC557", "2N2222", "TIP120", "IRF520", "IRLZ44N", "IRFZ44N"],
-      "12. Audio": ["Passive Buzzer", "Active Buzzer", "Speaker", "DFPlayer Mini", "Microphone Module"],
-      "13. Inputs": ["Push Button", "Toggle Switch", "Joystick", "Rotary Encoder", "4x4 Keypad", "DIP Switch"],
-      "14. Timing": ["DS1307 RTC", "DS3231 RTC", "Crystal Oscillator"],
-      "15. Storage": ["MicroSD Module", "EEPROM", "Flash Memory"],
-      "16. Robotics": ["Robot Chassis", "Wheels", "Caster Wheel", "Servo Brackets", "Robot Arm", "Omni Wheel", "Mecanum Wheel", "Encoder Motor"],
-      "17. PCB & Wiring": ["Breadboard", "Perfboard", "PCB", "Jumper Wires", "Male/Female Headers", "Screw Terminals", "Dupont Connectors", "JST Connectors"],
-      "18. Test Equipment": ["Digital Multimeter", "Oscilloscope", "Logic Analyzer", "USB Tester", "LCR Meter", "Bench Power Supply"],
-      "19. Soldering": ["Soldering Iron", "Solder Wire", "Flux", "Desolder Pump", "Hot Air Station", "Wire Stripper", "Side Cutter", "Crimping Tool"],
-      "20. IoT Platforms": ["Arduino IoT Cloud", "Blynk", "ThingSpeak", "MQTT", "AWS IoT", "Firebase", "Adafruit IO", "Ubidots", "Node-RED", "Home Assistant"],
-      "21. Advanced Modules": ["ESP32-CAM", "Voice Recognition", "Load Cell + HX711", "pH Sensor", "EC Sensor", "TDS Sensor", "Turbidity Sensor", "Vibration Sensor", "Flex Sensor", "Strain Gauge", "INA219", "ACS712", "Voltage Sensor Module"]
+      "1. Microcontrollers & Development Boards": ["Arduino Uno", "Arduino Nano", "ESP32 DevKit V1", "ESP8266 NodeMCU", "Raspberry Pi Pico"],
+      "2. Sensors": ["HC-SR04 Ultrasonic", "DHT11", "DHT22", "Soil Moisture", "MQ-135", "PIR Motion", "ADXL345", "MPU6050", "LDR", "Water Level"],
+      "3. Communication Modules": ["HC-05", "HC-06", "NRF24L01", "LoRa SX1278", "SIM800L", "RC522 RFID"],
+      "4. Displays": ["16x2 LCD", "20x4 LCD", "0.96 OLED", "TFT LCD"],
+      "5. Motors & Actuators": ["TT DC Gear Motor", "SG90", "MG996R", "28BYJ-48", "NEMA17"],
+      "6. Motor Drivers": ["L293D", "L298N", "TB6612FNG", "A4988"],
+      "7. Power & Relays": ["1-Channel Relay", "4-Channel Relay", "18650 Battery", "TP4056", "LM2596"]
     };
 
     function getEstimatedPrice(item) {
@@ -254,19 +272,14 @@
         
         items.forEach(item => {
           let price = getEstimatedPrice(item);
-          // Added touch-action to labels for better mobile response
           dropdownHtml += `<label class="comp-item flex items-center gap-3 cursor-pointer text-slate-300 hover:bg-slate-800 p-3 rounded-lg" style="touch-action: manipulation;"><input type="checkbox" value="${price}" data-name="${item}" onchange="updateQuotation()" class="comp-check rounded accent-blue-600 w-5 h-5"> <span class="text-sm truncate">${item}</span></label>`;
-          // Added onclick alert for Store Grid Items
-          storeHtml += `<div onclick="storeAlert()" role="button" tabindex="0" class="bg-slate-900 border border-slate-800 rounded-xl p-4 relative overflow-hidden cursor-pointer hover:border-amber-500/30 transition"><div class="absolute top-2 right-2 bg-amber-500/20 text-amber-400 text-[9px] font-black px-2 py-0.5 rounded uppercase border border-amber-500/30">Coming Soon</div><div class="font-semibold text-slate-200 text-sm mt-3 mb-1">${item}</div></div>`;
+          storeHtml += `<div onclick="storeAlert()" role="button" tabindex="0" class="bg-slate-900 border border-slate-800 rounded-xl p-4 relative overflow-hidden cursor-pointer hover:border-amber-500/30 transition"><div class="absolute top-2 right-2 bg-amber-500/20 text-amber-400 text-[9px] font-black px-2 py-0.5 rounded uppercase border border-amber-500/30">Soon</div><div class="font-semibold text-slate-200 text-sm mt-3 mb-1">${item}</div></div>`;
         });
         storeHtml += `</div>`;
       }
       listContainer.innerHTML = dropdownHtml;
       storeContainer.innerHTML = storeHtml;
-    } catch(e) {
-      document.getElementById('system-error').innerText = "UI Loading Error: " + e.message;
-      document.getElementById('system-error').classList.remove('hidden');
-    }
+    } catch(e) {}
 
     window.finalComponentCost = 0;
     window.updateQuotation = function() {
@@ -282,7 +295,37 @@
       document.getElementById('quotation-price').innerText = `₹${(compCost + makingCharge).toFixed(0)}`;
     }
 
-    // 4. FIREBASE LOGIC
+    // PDF INVOICE LOGIC
+    function generateProfessionalPDF(projectTitle, tickedParts, customCost, compCost, makingCharge, totalCost, userName, userEmail) {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+      doc.setFont("helvetica", "bold"); doc.setFontSize(22); doc.setTextColor(37, 99, 235); doc.text("MD CREATIONS", 20, 20);
+      doc.setFont("helvetica", "normal"); doc.setFontSize(10); doc.setTextColor(100, 116, 139); doc.text("Engineering & Web Solutions", 20, 28); doc.text("Pune, Maharashtra, India", 20, 33);
+      doc.setFontSize(14); doc.setTextColor(15, 23, 42); doc.text("QUOTATION / INVOICE", 140, 20);
+      doc.setFontSize(10); const invoiceNo = "MDC-" + Math.floor(Math.random() * 90000 + 10000);
+      doc.text(`Invoice No: ${invoiceNo}`, 140, 28); doc.text(`Date: ${new Date().toLocaleDateString()}`, 140, 33);
+      doc.setDrawColor(226, 232, 240); doc.line(20, 42, 190, 42);
+      doc.setFont("helvetica", "bold"); doc.text("Prepared For:", 20, 52); doc.setFont("helvetica", "normal"); doc.text(userName, 20, 58); doc.text(userEmail, 20, 63);
+      doc.setFont("helvetica", "bold"); doc.text("Project Title:", 140, 52); doc.setFont("helvetica", "normal"); doc.text(doc.splitTextToSize(projectTitle, 50), 140, 58);
+      doc.setFillColor(241, 245, 249); doc.rect(20, 75, 170, 10, "F");
+      doc.setFont("helvetica", "bold"); doc.text("Description", 25, 82); doc.text("Amount (INR)", 160, 82);
+      doc.setFont("helvetica", "normal"); let yPos = 95;
+      if (tickedParts.length > 0) {
+        doc.text("Standard Hardware Components:", 25, yPos); yPos += 7;
+        tickedParts.forEach(part => { doc.text(`- ${part}`, 30, yPos); yPos += 7; if(yPos > 270) { doc.addPage(); yPos = 20; } });
+      }
+      if (customCost > 0) { doc.text("Custom Components Cost", 25, yPos); doc.text(`Rs. ${customCost.toFixed(2)}`, 160, yPos); yPos += 10; }
+      doc.setDrawColor(226, 232, 240); doc.line(20, yPos, 190, yPos); yPos += 8;
+      doc.setFont("helvetica", "bold"); doc.text("Total Hardware Cost:", 25, yPos); doc.text(`Rs. ${compCost.toFixed(2)}`, 160, yPos); yPos += 8;
+      doc.setFont("helvetica", "normal"); doc.text("Making & Assembly Charges (35%):", 25, yPos); doc.text(`Rs. ${makingCharge.toFixed(2)}`, 160, yPos); yPos += 10;
+      doc.setFillColor(239, 246, 255); doc.rect(20, yPos-6, 170, 12, "F");
+      doc.setFontSize(12); doc.setFont("helvetica", "bold"); doc.text("GRAND TOTAL", 110, yPos+2); doc.setTextColor(37, 99, 235); doc.text(`Rs. ${totalCost.toFixed(2)}`, 160, yPos+2);
+      doc.save(`MD_Creations_Invoice_${invoiceNo}.pdf`);
+    }
+
+    // --- YOUR ADMIN EMAIL CONFIGURATION --- //
+    const ADMIN_EMAIL = "mdcreation1708@gmail.com";
+
     try {
       const firebaseConfig = {
         apiKey: "AIzaSyACdSoGxY5g0VRZvGtvysYMLwjGUyUz06s",
@@ -298,29 +341,72 @@
       const db = firebase.firestore();
       const provider = new firebase.auth.GoogleAuthProvider();
 
+      // ADMIN DATA FETCHER
+      window.loadAdminData = async function() {
+        try {
+          const tableBody = document.getElementById('admin-orders-table');
+          tableBody.innerHTML = `<tr><td colspan="4" class="text-center py-8 text-slate-500"><i data-lucide="loader-2" class="w-5 h-5 animate-spin mx-auto mb-2"></i> Loading orders...</td></tr>`;
+          lucide.createIcons();
+          
+          const snapshot = await db.collection("orders").orderBy("timestamp", "desc").get();
+          let html = '';
+          let totalRev = 0;
+          let count = 0;
+
+          snapshot.forEach(doc => {
+            const data = doc.data();
+            const date = data.timestamp ? data.timestamp.toDate().toLocaleDateString() : 'N/A';
+            const cost = data.totalCost || 0;
+            totalRev += cost;
+            count++;
+            
+            html += `
+              <tr class="hover:bg-slate-800/50 transition">
+                <td class="px-6 py-4 whitespace-nowrap text-slate-400">${date}</td>
+                <td class="px-6 py-4">
+                  <div class="font-bold text-white">${data.userName || 'Client'}</div>
+                  <div class="text-xs text-slate-500">${data.userEmail || 'No email'}</div>
+                </td>
+                <td class="px-6 py-4 font-medium text-blue-400">${data.projectTitle}</td>
+                <td class="px-6 py-4 font-bold text-emerald-400 text-right">₹${cost.toFixed(0)}</td>
+              </tr>`;
+          });
+
+          if(count === 0) html = `<tr><td colspan="4" class="text-center py-8 text-slate-500">No orders found.</td></tr>`;
+          tableBody.innerHTML = html;
+          document.getElementById('admin-total-orders').innerText = count;
+          document.getElementById('admin-total-revenue').innerText = `₹${totalRev.toFixed(0)}`;
+        } catch (e) {
+          console.error(e);
+          alert("Error loading admin data. Check Firestore rules.");
+        }
+      };
+
       auth.onAuthStateChanged((user) => {
         if (user) {
           closeAuthModal();
           if(!document.getElementById('page-landing').classList.contains('hidden')) showSection('page-dashboard');
           
+          let adminButtonHtml = '';
+          if (user.email === ADMIN_EMAIL) {
+            adminButtonHtml = `<button onclick="showSection('page-admin'); loadAdminData();" class="bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-xs font-bold px-3 py-2 rounded-xl flex items-center gap-1.5 transition"><i data-lucide="shield-check" class="w-4 h-4"></i> Admin Hub</button>`;
+          }
+
           document.getElementById('nav-user-area').innerHTML = `
-            <div class="flex items-center gap-3">
-              <button onclick="showSection('page-dashboard')" class="bg-slate-800 text-xs text-white px-4 py-2 rounded-xl">Hub</button>
-              <img src="${user.photoURL}" class="w-9 h-9 rounded-full">
+            <div class="flex items-center gap-2 sm:gap-3">
+              ${adminButtonHtml}
+              <button onclick="showSection('page-dashboard')" class="bg-slate-800 text-xs text-white px-3 sm:px-4 py-2 rounded-xl hidden sm:block">Hub</button>
+              <img src="${user.photoURL}" class="w-8 h-8 sm:w-9 sm:h-9 rounded-full border border-slate-700">
               <button onclick="firebase.auth().signOut()" class="bg-red-500/10 text-red-500 text-xs font-bold px-3 py-2 rounded-xl">Logout</button>
             </div>`;
+          lucide.createIcons();
         } else {
           showSection('page-landing');
           document.getElementById('nav-user-area').innerHTML = `<button onclick="openAuthModal()" class="bg-blue-600 text-white text-sm font-semibold px-5 py-2.5 rounded-xl">Sign In</button>`;
         }
       });
 
-      document.getElementById('googleSignInBtn').addEventListener('click', () => {
-        auth.signInWithPopup(provider).catch(error => {
-          document.getElementById('system-error').innerText = "Auth Error: " + error.message;
-          document.getElementById('system-error').classList.remove('hidden');
-        });
-      });
+      document.getElementById('googleSignInBtn').addEventListener('click', () => { auth.signInWithPopup(provider); });
 
       document.getElementById('submitOrderBtn').addEventListener('click', async (e) => {
         e.preventDefault();
@@ -328,29 +414,42 @@
         const title = document.getElementById('proj-title').value;
         if (!title || window.finalComponentCost <= 0) return alert("Enter title and pick parts.");
         
-        document.getElementById('submitOrderBtn').innerText = "Saving...";
+        document.getElementById('submitOrderBtn').innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> Saving...`;
+        lucide.createIcons();
+
+        const customCost = parseFloat(document.getElementById('custom-comp-cost').value) || 0;
+        const compCost = window.finalComponentCost;
+        const makingCharge = compCost * 0.35;
+        const totalCost = compCost + makingCharge;
+        let tickedParts = [];
+        document.querySelectorAll('.comp-check:checked').forEach(cb => { tickedParts.push(cb.getAttribute('data-name')); });
+        
+        const userName = auth.currentUser.displayName || "Client";
+        const userEmail = auth.currentUser.email || "";
+
+        try { generateProfessionalPDF(title, tickedParts, customCost, compCost, makingCharge, totalCost, userName, userEmail); } catch(pdfError) {}
         
         try {
           await db.collection("orders").add({
-            userId: auth.currentUser.uid,
-            userName: auth.currentUser.displayName,
-            projectTitle: title,
-            totalCost: window.finalComponentCost + (window.finalComponentCost * 0.35),
-            timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            userId: auth.currentUser.uid, userName: userName, userEmail: userEmail,
+            projectTitle: title, totalCost: totalCost, timestamp: firebase.firestore.FieldValue.serverTimestamp()
           });
-          alert("Saved to DB!");
-          window.open(`https://wa.me/91XXXXXXXXXX?text=New Order: ${title}`, '_blank');
+          window.open(`https://wa.me/91XXXXXXXXXX?text=Hello MD Creations!%0A*New Order:* ${title}%0A*Total Est:* ₹${totalCost}`, '_blank');
+          
+          document.getElementById('proj-title').value = '';
+          document.getElementById('custom-comp-cost').value = '';
+          document.querySelectorAll('.comp-check').forEach(cb => cb.checked = false);
+          window.updateQuotation();
+          showSection('page-dashboard');
         } catch(error) {
           alert("Database error: " + error.message);
         } finally {
-          document.getElementById('submitOrderBtn').innerText = "Save & Order";
+          document.getElementById('submitOrderBtn').innerHTML = `<i data-lucide="download" class="w-4 h-4"></i><span>Save & Download Invoice</span>`;
+          lucide.createIcons();
         }
       });
 
-    } catch(e) {
-      document.getElementById('system-error').innerText = "Firebase Error: " + e.message;
-      document.getElementById('system-error').classList.remove('hidden');
-    }
+    } catch(e) {}
   </script>
 </body>
 </html>
